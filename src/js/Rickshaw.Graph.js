@@ -44,7 +44,7 @@ Rickshaw.Graph = function(args) {
 
 		this.defaults = {
 			interpolation: 'cardinal',
-			offset: 'zero',
+			offset: d3.stackOffsetNone,
 			min: undefined,
 			max: undefined,
 			preserve: false,
@@ -207,14 +207,13 @@ Rickshaw.Graph = function(args) {
 			this._validateStackable();
 			stackedData = Rickshaw.stack(data, this.offset || d3.stackOffsetNone);
 
-		stackedData = stackedData || data;
-
-		if (this.renderer.unstack) {
-			stackedData.forEach( function(seriesData) {
+		} else {
+			data.forEach( function(seriesData) {
 				seriesData.forEach( function(d) {
 					d.y0 = d.y0 === undefined ? 0 : d.y0;
 				} );
 			} );
+			stackedData = data;
 		}
 
 		this.stackData.hooks.after.forEach( function(entry) {

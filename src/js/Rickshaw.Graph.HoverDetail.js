@@ -54,7 +54,7 @@ Rickshaw.Graph.HoverDetail = Rickshaw.Class.create({
 
 		this.graph.series.active().forEach( function(series) {
 
-			var data = this.graph.stackedData[j++];
+			var data = series.stack;
 
 			if (!data.length)
 				return;
