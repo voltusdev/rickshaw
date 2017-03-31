@@ -88,7 +88,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 
 		if (this.orientation == 'left') {
 			var berth = this.height * this.berthRate;
-			var transform = 'translate(' + this.width + ', ' + berth + ')';
+			var transform = 'translate(' + (this.width - 1) + ', ' + berth + ')';
 		}
 
 		if (this.element) {
