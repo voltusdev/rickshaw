@@ -21,7 +21,7 @@ Rickshaw.Graph.Renderer.Stack = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 			.x( function(d) { return graph.x(d.x) } )
 			.y0( function(d) { return graph.y(d.y0) } )
 			.y1( function(d) { return graph.y(d.y + d.y0) } )
-			.curve(this.graph.interpolation);
+			.curve(this.graph.curve);
 		factory.defined( function(d) { return d.y !== null } );
 		return factory;
 	}

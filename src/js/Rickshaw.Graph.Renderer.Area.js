@@ -21,7 +21,7 @@ Rickshaw.Graph.Renderer.Area = Rickshaw.Class.create( Rickshaw.Graph.Renderer, {
 			.x( function(d) { return graph.x(d.x) } )
 			.y0( function(d) { return graph.y(d.y0) } )
 			.y1( function(d) { return graph.y(d.y + d.y0) } )
-			.curve(graph.interpolation);
+			.curve(graph.curve);
 		factory.defined( function(d) { return d.y !== null } );
 		return factory;
 	},
@@ -33,7 +33,7 @@ Rickshaw.Graph.Renderer.Area = Rickshaw.Class.create( Rickshaw.Graph.Renderer, {
 		var factory = d3.line()
 			.x( function(d) { return graph.x(d.x) } )
 			.y( function(d) { return graph.y(d.y + d.y0) } )
-			.curve(graph.interpolation);
+			.curve(graph.curve);
 		factory.defined( function(d) { return d.y !== null } );
 		return factory;
 	},

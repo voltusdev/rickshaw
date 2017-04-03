@@ -119,7 +119,7 @@ exports.respectStrokeFactory = function(test) {
 			var factory = d3.line()
 				.x( function(d) { return graph.x(d.x) } )
 				.y( function(d) { return graph.y(d.y + d.y0) } )
-				.curve(graph.interpolation);
+				.curve(d3.curveCardinal.tension(0.8));
 			factory.defined( function(d) { return d.y !== null } );
 			return factory;
 		},
@@ -129,7 +129,7 @@ exports.respectStrokeFactory = function(test) {
 			var factory = d3.line()
 				.x( function(d) { return graph.x(d.x) } )
 				.y( function(d) { return graph.y(d.y + d.y0) } )
-				.curve(graph.interpolation);
+				.curve(d3.curveCardinal.tension(0.8));
 			factory.defined( function(d) { return d.y !== null } );
 			return factory;
 		}

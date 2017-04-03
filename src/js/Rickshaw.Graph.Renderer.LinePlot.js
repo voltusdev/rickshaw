@@ -23,7 +23,7 @@ Rickshaw.Graph.Renderer.LinePlot = Rickshaw.Class.create( Rickshaw.Graph.Rendere
 		var factory = d3.line()
 			.x( function(d) { return graph.x(d.x) } )
 			.y( function(d) { return graph.y(d.y) } )
-			.curve(this.graph.interpolation);
+			.curve(this.graph.curve);
 		factory.defined( function(d) { return d.y !== null } );
 		return factory;
 	},
