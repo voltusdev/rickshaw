@@ -162,7 +162,7 @@ exports.scales = function(test) {
 	var yTicks = el.getElementsByClassName('y_ticks')[0].getElementsByTagName('g');
 	test.equal(yTicks[0].getAttribute('transform'), 'translate(0,500)');
 	test.equal(yTicks[1].getAttribute('transform'), 'translate(0,275.24400874015976)');
-	test.equal(yTicks[2].getAttribute('transform'), 'translate(0,182.14702893572516)');
+	test.equal(yTicks[2].getAttribute('transform'), 'translate(0,182.14702893572513)');
 
 	// should make a copy mutable object
 	scale.range([0, 960]);
