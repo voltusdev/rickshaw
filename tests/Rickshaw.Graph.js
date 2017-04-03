@@ -128,13 +128,13 @@ exports.scales = function(test) {
 		}
 	];
 
-	var scale = d3.time.scale();
+	var scale = d3.scaleTime();
 	var graph = new Rickshaw.Graph({
 		element: el,
 		width: 960,
 		height: 500,
 		xScale: scale,
-		yScale: d3.scale.sqrt(),
+		yScale: d3.scaleSqrt(),
 		series: series
 	});
 
@@ -283,8 +283,8 @@ exports.configure = function(test) {
 	graph.configure({ width: 900, height: 100 });
 
 	test.deepEqual([ graph.width, graph.height ], [ 900, 100 ], "graph dimensions take");
-	test.deepEqual(graph.vis[0][0].getAttribute('width'), 900, "width set on svg");
-	test.deepEqual(graph.vis[0][0].getAttribute('height'), 100, "height set on svg");
+	test.deepEqual(graph.vis._groups[0][0].getAttribute('width'), 900, "width set on svg");
+	test.deepEqual(graph.vis._groups[0][0].getAttribute('height'), 100, "height set on svg");
 
 	test.done();
 };

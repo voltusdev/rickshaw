@@ -28,7 +28,7 @@ exports["should add the series className to all scatterplot points"] = function(
 	
 	var path = graph.vis.selectAll('circle.fnord')
 	test.equals(5, path.size())
-	test.equals(path[0][1].getAttribute('opacity'), 0.8, 'custom opacity')
-	test.equals(path[0][4].getAttribute('opacity'), 1, 'default opacity')
+	test.equals(path._groups[0][1].getAttribute('opacity'), 0.8, 'custom opacity')
+	test.equals(path._groups[0][4].getAttribute('opacity'), 1, 'default opacity')
 	test.done()
 }
