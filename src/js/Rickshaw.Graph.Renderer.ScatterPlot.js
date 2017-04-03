@@ -47,8 +47,8 @@ Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create( Rickshaw.Graph.Rend
 			if (series.className) {
 				nodes.classed(series.className, true);
 			}
-			
-			Array.prototype.forEach.call(nodes[0], function(n) {
+
+			nodes.nodes().forEach(function(n) {
 				n.setAttribute('fill', series.color);
 			} );
 

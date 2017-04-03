@@ -97,9 +97,9 @@ Rickshaw.Graph.Renderer = Rickshaw.Class.create( {
 			.attr("d", this.seriesPathFactory());
 
 		if (this.stroke) {
-                        var strokeNodes = vis.selectAll('path.stroke')
-                                .data(data)
-                                .enter().append("svg:path")
+			var strokeNodes = vis.selectAll('path.stroke')
+				.data(data)
+				.enter().append("svg:path")
 				.classed('stroke', true)
 				.attr("d", this.seriesStrokeFactory());
 		}
@@ -107,8 +107,8 @@ Rickshaw.Graph.Renderer = Rickshaw.Class.create( {
 		var i = 0;
 		series.forEach( function(series) {
 			if (series.disabled) return;
-			series.path = pathNodes[0][i];
-			if (this.stroke) series.stroke = strokeNodes[0][i];
+			series.path = pathNodes._groups[0][i];
+			if (this.stroke) series.stroke = strokeNodes._groups[0][i];
 			this._styleSeries(series);
 			i++;
 		}, this );

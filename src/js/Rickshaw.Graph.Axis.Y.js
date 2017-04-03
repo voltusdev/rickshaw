@@ -25,7 +25,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 				.append("svg:svg")
 				.attr('class', 'rickshaw_graph y_axis');
 
-			this.element = this.vis[0][0];
+			this.element = this.vis._groups[0][0];
 			this.element.style.position = 'relative';
 
 			this.setSize({ width: args.width, height: args.height });
@@ -82,7 +82,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 	},
 
 	_drawAxis: function(scale) {
-		var axis = d3.svg.axis().scale(scale).orient(this.orientation);
+		var axis = this._makeAxis(scale);
 		axis.tickFormat(this.tickFormat);
 		if (this.tickValues) axis.tickValues(this.tickValues);
 
@@ -99,7 +99,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 			.append("svg:g")
 			.attr("class", ["y_ticks", this.ticksTreatment].join(" "))
 			.attr("transform", transform)
-			.call(axis.ticks(this.ticks).tickSubdivide(0).tickSize(this.tickSize));
+			.call(axis.ticks(this.ticks).tickSize(this.tickSize));
 
 		return axis;
 	},
@@ -110,8 +110,15 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 		this.graph.vis
 			.append("svg:g")
 			.attr("class", "y_grid")
-			.call(axis.ticks(this.ticks).tickSubdivide(0).tickSize(gridSize))
+			.call(axis.ticks(this.ticks).tickSize(gridSize))
 			.selectAll('text')
 			.each(function() { this.parentNode.setAttribute('data-y-value', this.textContent) });
+	},
+
+	_makeAxis: function(scale) {
+		if (this.orientation === 'left') {
+			return d3.axisLeft(scale);
+		}
+		return d3.axisRight(scale);
 	}
 } );

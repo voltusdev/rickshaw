@@ -75,7 +75,7 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 				var ns = "http://www.w3.org/2000/svg";
 				var vis = document.createElementNS(ns, 'g');
 
-				graph.vis[0][0].appendChild(vis);
+				graph.vis._groups[0][0].appendChild(vis);
 
 				var renderer = graph._renderers[series.renderer];
 
@@ -119,7 +119,7 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 
 			if (!group.renderer.unstack) {
 
-				var layout = d3.layout.stack();
+				var layout = d3.stack();
 				var stackedData = Rickshaw.clone(layout(data));
 
 				series.forEach( function(series, index) {

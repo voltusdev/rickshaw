@@ -78,7 +78,7 @@ Rickshaw.Graph.Renderer.Bar = Rickshaw.Class.create( Rickshaw.Graph.Renderer, {
 				.attr("opacity", series.opacity)
 				.attr("transform", transform);
 
-			Array.prototype.forEach.call(nodes[0], function(n) {
+			Array.prototype.forEach.call(nodes._groups[0], function(n) {
 				n.setAttribute('fill', series.color);
 			} );
 

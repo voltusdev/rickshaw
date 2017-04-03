@@ -28,7 +28,7 @@ Rickshaw.Graph.Axis.X = function(args) {
 				.attr('width', this.width)
 				.attr('class', 'rickshaw_graph x_axis_d3');
 
-			this.element = this.vis[0][0];
+			this.element = this.vis._groups[0][0];
 			this.element.style.position = 'relative';
 
 			this.setSize({ width: args.width, height: args.height });
@@ -59,7 +59,12 @@ Rickshaw.Graph.Axis.X = function(args) {
 
 		if (this._renderWidth !== undefined && this.graph.width !== this._renderWidth) this.setSize({ auto: true });
 
-		var axis = d3.svg.axis().scale(this.graph.x).orient(this.orientation);
+		var axis;
+		if (this.orientation === 'bottom') {
+			axis = d3.axisBottom(this.graph.x);
+		} else {
+			axis = d3.axisTop(this.graph.x);
+		}
 		axis.tickFormat( args.tickFormat || function(x) { return x } );
 		if (this.tickValues) axis.tickValues(this.tickValues);
 
@@ -85,14 +90,14 @@ Rickshaw.Graph.Axis.X = function(args) {
 			.append("svg:g")
 			.attr("class", ["x_ticks_d3", this.ticksTreatment].join(" "))
 			.attr("transform", transform)
-			.call(axis.ticks(this.ticks).tickSubdivide(0).tickSize(this.tickSize));
+			.call(axis.ticks(this.ticks).tickSize(this.tickSize));
 
 		var gridSize = (this.orientation == 'bottom' ? 1 : -1) * this.graph.height;
 
 		this.graph.vis
 			.append("svg:g")
 			.attr("class", "x_grid_d3")
-			.call(axis.ticks(this.ticks).tickSubdivide(0).tickSize(gridSize))
+			.call(axis.ticks(this.ticks).tickSize(gridSize))
 			.selectAll('text')
 			.each(function() { this.parentNode.setAttribute('data-x-value', this.textContent) });
 

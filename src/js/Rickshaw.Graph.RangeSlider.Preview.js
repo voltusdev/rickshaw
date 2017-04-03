@@ -163,7 +163,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 		// Use the first graph as the "master" for the frame state
 		var masterGraph = this.graphs[0];
 
-		var domainScale = d3.scale.linear()
+		var domainScale = d3.scaleLinear()
 			.domain([0, this.previewWidth])
 			.range(masterGraph.dataDomain());
 
@@ -381,7 +381,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 
 			self.graphs.forEach(function(graph) {
 
-				var domainScale = d3.scale.linear()
+				var domainScale = d3.scaleLinear()
 					.interpolate(d3.interpolateNumber)
 					.domain([0, self.previewWidth])
 					.range(graph.dataDomain());

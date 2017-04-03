@@ -20,12 +20,11 @@ Rickshaw.Graph.Renderer.LinePlot = Rickshaw.Class.create( Rickshaw.Graph.Rendere
 
 		var graph = this.graph;
 
-		var factory = d3.svg.line()
+		var factory = d3.line()
 			.x( function(d) { return graph.x(d.x) } )
 			.y( function(d) { return graph.y(d.y) } )
-			.interpolate(this.graph.interpolation).tension(this.tension);
-
-		factory.defined && factory.defined( function(d) { return d.y !== null } );
+			.curve(this.graph.interpolation);
+		factory.defined( function(d) { return d.y !== null } );
 		return factory;
 	},
 
@@ -54,7 +53,7 @@ Rickshaw.Graph.Renderer.LinePlot = Rickshaw.Class.create( Rickshaw.Graph.Rendere
 		var i = 0;
 		series.forEach(function(series) {
 			if (series.disabled) return;
-			series.path = nodes[0][i++];
+			series.path = nodes._groups[0][i++];
 			this._styleSeries(series);
 		}, this);
 
@@ -69,7 +68,7 @@ Rickshaw.Graph.Renderer.LinePlot = Rickshaw.Class.create( Rickshaw.Graph.Rendere
 				.attr("cy", function(d) { return graph.y(d.y) })
 				.attr("r", function(d) { return ("r" in d) ? d.r : dotSize});
 
-			Array.prototype.forEach.call(nodes[0], function(n) {
+			Array.prototype.forEach.call(nodes._groups[0], function(n) {
 				if (!n) return;
 				n.setAttribute('data-color', series.color);
 				n.setAttribute('fill', 'white');
