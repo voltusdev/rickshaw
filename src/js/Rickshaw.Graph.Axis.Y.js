@@ -34,8 +34,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 			this.vis = this.graph.vis;
 		}
 
-		var self = this;
-		this.graph.onUpdate( function() { self.render() } );
+		this.graph.onUpdate( function() { this.render() }.bind(this) );
 	},
 
 	setSize: function(args) {

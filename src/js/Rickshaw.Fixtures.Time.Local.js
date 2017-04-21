@@ -2,8 +2,6 @@ Rickshaw.namespace('Rickshaw.Fixtures.Time.Local');
 
 Rickshaw.Fixtures.Time.Local = function() {
 
-	var self = this;
-
 	this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 	this.units = [
@@ -18,11 +16,11 @@ Rickshaw.Fixtures.Time.Local = function() {
 		}, {
 			name: 'month',
 			seconds: 86400 * 30.5,
-			formatter: function(d) { return self.months[d.getMonth()] }
+			formatter: function(d) { return this.months[d.getMonth()] }.bind(this)
 		}, {
 			name: 'week',
 			seconds: 86400 * 7,
-			formatter: function(d) { return self.formatDate(d) }
+			formatter: function(d) { return this.formatDate(d) }.bind(this)
 		}, {
 			name: 'day',
 			seconds: 86400,
@@ -30,15 +28,15 @@ Rickshaw.Fixtures.Time.Local = function() {
 		}, {
 			name: '6 hour',
 			seconds: 3600 * 6,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: 'hour',
 			seconds: 3600,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: '15 minute',
 			seconds: 60 * 15,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: 'minute',
 			seconds: 60,

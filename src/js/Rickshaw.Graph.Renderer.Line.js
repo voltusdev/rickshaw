@@ -17,12 +17,11 @@ Rickshaw.Graph.Renderer.Line = Rickshaw.Class.create( Rickshaw.Graph.Renderer, {
 
 		var graph = this.graph;
 
-		var factory = d3.line()
+		return d3.line()
 			.x( function(d) { return graph.x(d.x) } )
 			.y( function(d) { return graph.y(d.y) } )
-			.curve(this.graph.curve);
-		factory.defined( function(d) { return d.y !== null } );
-		return factory;
+			.curve(this.graph.curve)
+			.defined( function(d) { return d.y !== null } );
 	}
 } );
 

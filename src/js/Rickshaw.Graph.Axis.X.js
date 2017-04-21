@@ -2,7 +2,6 @@ Rickshaw.namespace('Rickshaw.Graph.Axis.X');
 
 Rickshaw.Graph.Axis.X = function(args) {
 
-	var self = this;
 	var berthRate = 0.10;
 
 	this.initialize = function(args) {
@@ -37,7 +36,7 @@ Rickshaw.Graph.Axis.X = function(args) {
 			this.vis = this.graph.vis;
 		}
 
-		this.graph.onUpdate( function() { self.render() } );
+		this.graph.onUpdate( function() { this.render() }.bind(this) );
 	};
 
 	this.setSize = function(args) {

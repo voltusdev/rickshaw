@@ -15,10 +15,6 @@ Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create( Rickshaw.Graph.Rend
 		} );
 	},
 
-	initialize: function($super, args) {
-		$super(args);
-	},
-
 	render: function(args) {
 
 		args = args || {};

@@ -17,13 +17,12 @@ Rickshaw.Graph.Renderer.Stack = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 
 		var graph = this.graph;
 
-		var factory = d3.area()
+		return d3.area()
 			.x( function(d) { return graph.x(d.x) } )
 			.y0( function(d) { return graph.y(d.y0) } )
 			.y1( function(d) { return graph.y(d.y + d.y0) } )
-			.curve(graph.curve);
-		factory.defined( function(d) { return d.y !== null } );
-		return factory;
+			.curve(graph.curve)
+			.defined( function(d) { return d.y !== null } );
 	}
 } );
 
