@@ -4,6 +4,12 @@ Rickshaw.Graph.Renderer.Stack = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 
 	name: 'stack',
 
+	render: function($super, args) {
+		// TODO(butterflyhug): I have absolutely no idea why we need to explicitly
+		//     override the superclass in order to call its implementation here.
+		$super(args);
+	},
+
 	defaults: function($super) {
 
 		return Rickshaw.extend( $super(), {
