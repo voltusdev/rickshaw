@@ -115,7 +115,9 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 				.filter( function(series) { return !series.disabled } );
 
 			var data = series
-				.map( function(series) { return series.stack } );
+				.map( function(series) { return series.data } );
+
+			var stackedData = Rickshaw.stack(data, group.renderer.offset || d3.stackOffsetNone);
 
 			if (!group.renderer.unstack) {
 

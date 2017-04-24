@@ -205,11 +205,7 @@ Rickshaw.Graph = function(args) {
 		if (!this.renderer.unstack) {
 
 			this._validateStackable();
-
-			var layout = d3.stack()
-				.offset(self.offset);
-			stackedData = layout(data);
-		}
+			stackedData = Rickshaw.stack(data, this.offset || d3.stackOffsetNone);
 
 		stackedData = stackedData || data;
 
