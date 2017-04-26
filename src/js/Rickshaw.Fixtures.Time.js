@@ -84,15 +84,7 @@ Rickshaw.Fixtures.Time = function() {
 			if (floor == time) return time;
 
 			year = date.getUTCFullYear();
-			var month = date.getUTCMonth();
-
-			if (month == 11) {
-				month = 0;
-				year = year + 1;
-			} else {
-				month += 1;
-			}
-
+			var month = date.getUTCMonth() + 1;
 			return Date.UTC(year, month) / 1000;
 		}
 

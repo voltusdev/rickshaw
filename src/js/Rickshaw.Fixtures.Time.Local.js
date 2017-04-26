@@ -79,17 +79,8 @@ Rickshaw.Fixtures.Time.Local = function() {
 		if (unit.name == 'day') {
 
 			var nearFuture = new Date((time + unit.seconds - 1) * 1000);
-
-			var rounded = new Date(0);
-			rounded.setFullYear(nearFuture.getFullYear());
-			rounded.setMonth(nearFuture.getMonth());
-			rounded.setDate(nearFuture.getDate());
-			rounded.setMilliseconds(0);
-			rounded.setSeconds(0);
-			rounded.setMinutes(0);
-			rounded.setHours(0);
-
-			return rounded.getTime() / 1000;
+			nearFuture.setHours(0, 0, 0, 0);
+			return nearFuture.getTime() / 1000;
 		}
 
 		if (unit.name == 'month') {
@@ -100,15 +91,7 @@ Rickshaw.Fixtures.Time.Local = function() {
 			if (floor == time) return time;
 
 			year = date.getFullYear();
-			var month = date.getMonth();
-
-			if (month == 11) {
-				month = 0;
-				year = year + 1;
-			} else {
-				month += 1;
-			}
-
+			var month = date.getMonth() + 1;
 			return new Date(year, month).getTime() / 1000;
 		}
 
