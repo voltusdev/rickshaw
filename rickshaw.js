@@ -12,7 +12,7 @@
 /* jshint -W079 */
 
 var Rickshaw = {
-	version: '1.6.6',
+	version: '1.6.7',
 
 	namespace: function(namespace, obj) {
 
@@ -1166,26 +1166,26 @@ Rickshaw.Fixtures.Time.Local = function() {
 Rickshaw.namespace('Rickshaw.Fixtures.Number');
 
 Rickshaw.Fixtures.Number.formatKMBT = function(y) {
-	var abs_y = Math.abs(y);
-	if (abs_y >= 1000000000000)   { return y / 1000000000000 + "T" }
-	else if (abs_y >= 1000000000) { return y / 1000000000 + "B" }
-	else if (abs_y >= 1000000)    { return y / 1000000 + "M" }
-	else if (abs_y >= 1000)       { return y / 1000 + "K" }
-	else if (abs_y < 1 && abs_y > 0)  { return y.toFixed(2) }
-	else if (abs_y === 0)         { return '' }
-	else                      { return y }
+    var abs_y = Math.abs(y);
+    if (abs_y >= 1000000000000)      { return (y / 1000000000000).toFixed(2) + "T" }
+    else if (abs_y >= 1000000000)    { return (y / 1000000000).toFixed(2) + "B" }
+    else if (abs_y >= 1000000)       { return (y / 1000000).toFixed(2) + "M" }
+    else if (abs_y >= 1000)          { return (y / 1000).toFixed(2) + "K" }
+    else if (abs_y < 1 && abs_y > 0) { return y.toFixed(2) }
+    else if (abs_y === 0)            { return '0' }
+    else                             { return y }
 };
 
 Rickshaw.Fixtures.Number.formatBase1024KMGTP = function(y) {
     var abs_y = Math.abs(y);
-    if (abs_y >= 1125899906842624)  { return y / 1125899906842624 + "P" }
-    else if (abs_y >= 1099511627776){ return y / 1099511627776 + "T" }
-    else if (abs_y >= 1073741824)   { return y / 1073741824 + "G" }
-    else if (abs_y >= 1048576)      { return y / 1048576 + "M" }
-    else if (abs_y >= 1024)         { return y / 1024 + "K" }
-    else if (abs_y < 1 && abs_y > 0)    { return y.toFixed(2) }
-    else if (abs_y === 0)           { return '' }
-    else                        { return y }
+    if (abs_y >= 1125899906842624)   { return (y / 1125899906842624).toFixed(2) + "P" }
+    else if (abs_y >= 1099511627776) { return (y / 1099511627776).toFixed(2) + "T" }
+    else if (abs_y >= 1073741824)    { return (y / 1073741824).toFixed(2) + "G" }
+    else if (abs_y >= 1048576)       { return (y / 1048576).toFixed(2) + "M" }
+    else if (abs_y >= 1024)          { return (y / 1024).toFixed(2) + "K" }
+    else if (abs_y < 1 && abs_y > 0) { return y.toFixed(2) }
+    else if (abs_y === 0)            { return '0' }
+    else                             { return y }
 };
 Rickshaw.namespace("Rickshaw.Color.Palette");
 
@@ -3320,7 +3320,7 @@ Rickshaw.Graph.Renderer = Rickshaw.Class.create( {
 		var fill = this.fill ? series.color : 'none';
 		var stroke = this.stroke ? series.color : 'none';
 		var strokeWidth = series.strokeWidth ? series.strokeWidth : this.strokeWidth;
-		var opacity = series.opacity ? series.opacity : this.opacity;
+		var opacity = series.opacity === undefined ? this.opacity : series.opacity;
 
 		series.path.setAttribute('fill', fill);
 		series.path.setAttribute('stroke', stroke);
@@ -3379,7 +3379,6 @@ Rickshaw.Graph.Renderer = Rickshaw.Class.create( {
 		}
 	}
 } );
-
 Rickshaw.namespace('Rickshaw.Graph.Renderer.Line');
 
 Rickshaw.Graph.Renderer.Line = Rickshaw.Class.create( Rickshaw.Graph.Renderer, {
@@ -3696,7 +3695,7 @@ Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create( Rickshaw.Graph.Rend
 		series.forEach( function(series) {
 
 			if (series.disabled) return;
-			var opacity = series.opacity ? series.opacity : 1;
+			var opacity = series.opacity === undefined ? 1 : series.opacity;
 
 			var nodes = vis.selectAll("path")
 				.data(series.stack.filter( function(d) { return d.y !== null } ))
@@ -3708,7 +3707,7 @@ Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create( Rickshaw.Graph.Rend
 			if (series.className) {
 				nodes.classed(series.className, true);
 			}
-			
+
 			Array.prototype.forEach.call(nodes[0], function(n) {
 				n.setAttribute('fill', series.color);
 			} );

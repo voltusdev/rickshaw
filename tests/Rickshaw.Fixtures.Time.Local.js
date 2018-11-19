@@ -1,4 +1,6 @@
 process.env.TZ = 'America/New_York';
+// This doesn't always set in time. Make sure to run with TZ='America/New_York' 
+// if needed
 
 var Rickshaw = require('../rickshaw');
 
