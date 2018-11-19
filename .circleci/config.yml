@@ -1,0 +1,32 @@
+version: 2.0
+
+jobs:
+  build:
+    docker:
+      - image: docker.io/circleci/node:11.1.0
+    working_directory: ~/project
+    environment:
+      TZ: 'America/New_York'
+    steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Branch }}-{{ .Revision }}
+            - v1-repo-{{ .Branch }}
+            - v1-repo
+      - checkout
+      - run:
+          name: build
+          command: |
+            set -e
+            npm install
+            npm run build
+      - run:
+          name: test
+          command: |
+            set -e
+            npm run coverage
+            npm run coveralls
+      - save_cache:
+          key: v1-repo-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ~/project
