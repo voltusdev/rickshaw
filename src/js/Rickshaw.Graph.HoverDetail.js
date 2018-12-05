@@ -180,14 +180,26 @@ Rickshaw.Graph.HoverDetail = Rickshaw.Class.create({
 		var actualY = series.scale ? series.scale.invert(point.value.y) : point.value.y;
 
 		item.innerHTML = this.formatter(series, point.value.x, actualY, formattedXValue, formattedYValue, point);
-		item.style.top = this.graph.y(point.value.y0 + point.value.y) + 'px';
+		
+		// What should the top be
+		var topInt = this.graph.y(point.value.y0 + point.value.y);
+		var topIntAdjusted = topInt;
+		var xLabelsize = xLabel.getBoundingClientRect();
+		if (topInt < (xLabelsize.height + xLabelsize.top)) {
+			// Let's make sure the label doesn't overlap with the tooltip
+			topIntAdjusted = xLabelsize.height + xLabelsize.top;
+		}
+
+		item.style.top = topIntAdjusted + 'px';
 
 		this.element.appendChild(item);
 
 		var dot = document.createElement('div');
 
 		dot.className = 'dot';
-		dot.style.top = item.style.top;
+		// the dot should be in the right position regardless of altering 
+		// the tooltip location
+		dot.style.top = topInt + "px";
 		dot.style.borderColor = series.color;
 
 		this.element.appendChild(dot);
