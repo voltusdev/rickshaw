@@ -25,7 +25,6 @@ jobs:
           command: |
             set -e
             npm run coverage
-            npm run coveralls
       - save_cache:
           key: v1-repo-{{ .Branch }}-{{ .Revision }}
           paths:
