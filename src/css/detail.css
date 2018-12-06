@@ -62,7 +62,7 @@
 	opacity: 1;
 	background: rgba(0, 0, 0, 0.8);
 }
-.rickshaw_graph .detail .item:after {
+/*.rickshaw_graph .detail .item:after {
 	position: absolute;
 	display: block;
 	width: 0;
@@ -85,7 +85,7 @@
 	margin-top: -5px;
 	border-left-color: rgba(0, 0, 0, 0.8);
 	border-right-width: 0;
-}
+}*/
 .rickshaw_graph .detail .dot {
 	width: 4px;
 	height: 4px;
