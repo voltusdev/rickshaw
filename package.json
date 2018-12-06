@@ -7,10 +7,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/maxmcd/rickshaw.git"
+    "url": "git://github.com/voltusdev/rickshaw.git"
   },
   "bugs": {
-    "url": "https://github.com/maxmcd/rickshaw/issues"
+    "url": "https://github.com/voltusdev/rickshaw/issues"
   },
   "keywords": [
     "charts",
@@ -20,7 +20,7 @@
     "svg"
   ],
   "license": "MIT",
-  "main": "./rickshaw",
+  "main": "./src",
   "engines": {
     "node": ">= 4.0.0"
   },
