@@ -30,7 +30,7 @@
     "istanbul": "^0.4.3",
     "jquery": "^3.2.1",
     "jsdom": "^8.1.0",
-    "jshint": "^2.9.5",
+    "jshint": "^2.9.6",
     "nodemon": "^1.11.0",
     "nodeunit": "^0.9.1",
     "sinon": "^2.3.8",
