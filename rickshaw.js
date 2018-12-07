@@ -2084,24 +2084,14 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 			stopPX: null
 		};
 
+		var timer;
+
 		//this.svg.on("mousedown", onMousedown);
 
-		this.svg.on("pointerdown", onMousedown);
-
-		// function onPointerDown(){
-		// 	var e = d3.event;
-		//
-		// 	if(e.pointerType === "mouse") {
-		// 		var el = d3.select(this);
-		// 		console.log(el);
-		// 		onMousedown(el);
-		// 	}
-		// 	console.log(d3.event);
-		// }
+		this.svg.on("pointerdown", eventHandler);
 
 		function onMouseup(datum, index) {
-			var e = d3.event;
-			console.log("up", e);
+			console.log("Mouse up", this);
 			drag.stopDt = pointAsDate(d3.event);
 			var windowAfterDrag = [
 				drag.startDt,
@@ -2123,8 +2113,8 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 		}
 
 		function onMousemove() {
-			var e = d3.event;
-			console.log("move", e);
+			var el = d3.select("svg");
+
 			var offset = drag.stopPX = (d3.event.offsetX || d3.event.layerX);
 			if (offset > (self.svgWidth - 1) || offset < 1) {
 				return;
@@ -2135,62 +2125,66 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 			if (isNaN(selectionWidth)) {
 				return reset(this);
 			}
+			console.log();
 			rectangle.attr("fill", self.fill)
+			.style("opacity", self.opacity)
 			.attr("x", limits[0])
 			.attr("width", selectionWidth);
 		}
 
-		//if long enough mousedown
 		function onPointerDown(){
-			console.log('it was long enough');
-		}
-
-		function onPointerupTimer(){
-			console.log('lifted touch, too short');
-		}
-
-		function onPointerMoveTimer(){
-			console.log('moved touch, too short');
-		}
-
-		function onMousedown() {
-			var e = d3.event;
-			console.log("down", e);
-			if (e.pointerType === "touch"){
-				var sel = d3.select(this);
-				var timer;
-				//start timer
-				timer = setTimeout(onPointerDown, 500);
-				console.log('timer set');
-				//use these bc they will be overwritten by onMousedown
-				//onup clear the timer
-				d3.select(document).on("pointerup", onPointerupTimer);
-				//on move check the timer, if too short clear timer
-				sel.on("pointermove", onMousemove);
-
-				console.log('touch event');
-			} else {
-				var el = d3.select(this);
-				rectangle = el.append("rect")
-				.style("opacity", self.opacity)
-				.attr("y", 0)
-				.attr("height", "100%");
-
+			console.log('pointerDown');
+			var el = d3.select(this);
 				if(d3.event.preventDefault) {
 					d3.event.preventDefault();
 				} else {
 					d3.event.returnValue = false;
 				}
-				drag.target = d3.event.target;
-				drag.startDt = pointAsDate(d3.event);
-				drag.startPX = d3.event.offsetX || d3.event.layerX;
-				el.on("pointermove", onMousemove);
-				d3.select(document).on("pointerup", onMouseup);
-				d3.select(document).on("keyup", function() {
-					if (d3.event.keyCode === ESCAPE_KEYCODE) {
-						reset(this);
-					}
-				});
+
+			drag.target = d3.event.target;
+			drag.startDt = pointAsDate(d3.event);
+			drag.startPX = d3.event.offsetX || d3.event.layerX;
+
+			rectangle = el.append("rect")
+			.style("opacity", 0)
+			.attr("y", 0)
+			.attr("height", "100%");
+
+			el.on("pointermove", onMousemove);
+			d3.select(document).on("pointerup", onMouseup);
+			d3.select(document).on("keyup", function() {
+				if (d3.event.keyCode === ESCAPE_KEYCODE) {
+					reset(this);
+				}
+			});
+		}
+
+		function eventHandler() {
+			var e = d3.event;
+			if (e.pointerType === "touch"){
+				var touchSelect = onPointerDown.bind(this);
+				timer = setTimeout(touchSelect, 1000);
+
+				d3.select(document).on("pointerup", onPointerupTimer);
+				d3.select(this).on("pointermove", onPointerMoveTimer);
+			} else {
+				var mouseClick = onPointerDown.bind(this);
+				mouseClick();
+			}
+		}
+
+		function onPointerupTimer(){
+			if(timer) {
+				clearTimeout(timer);
+				console.log('lifted touch, too short');
+			}
+
+		}
+
+		function onPointerMoveTimer(){
+			if(timer) {
+				clearTimeout(timer);
+				console.log('moved touch, too short');
 			}
 		}
 
