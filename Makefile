@@ -50,6 +50,7 @@ JS_FILES=\
 	src/js/Rickshaw.Graph.Renderer.LinePlot.js\
 	src/js/Rickshaw.Graph.Smoother.js\
 	src/js/Rickshaw.Graph.Socketio.js\
+	src/js/Rickshaw.Graph.TouchZoom.js\
 	src/js/Rickshaw.Series.js\
 	src/js/Rickshaw.Series.FixedDuration.js\
 	src/helpers/endUMD.js.append\

@@ -1,10 +1,10 @@
-Rickshaw.namespace('Rickshaw.Graph.DragZoom');
+Rickshaw.namespace('Rickshaw.Graph.TouchZoom');
 
-Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
+Rickshaw.Graph.TouchZoom = Rickshaw.Class.create({
 
 	initialize: function(args) {
 		if (!args || !args.graph) {
-			throw new Error("Rickshaw.Graph.DragZoom needs a reference to a graph");
+			throw new Error("Rickshaw.Graph.TouchZoom needs a reference to a graph");
 		}
 		var defaults = {
 			opacity: 0.5,
@@ -71,7 +71,8 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 			if (isNaN(selectionWidth)) {
 				return reset(this);
 			}
-			rectangle.attr("fill", self.fill)
+			rectangle.style("opacity", self.opacity)
+      .attr("fill", self.fill)
 			.attr("x", limits[0])
 			.attr("width", selectionWidth);
 		}
@@ -79,7 +80,7 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 		function onMousedown() {
 			var el = d3.select(this);
 			rectangle = el.append("rect")
-			.style("opacity", self.opacity)
+			.style("opacity", 0)
 			.attr("y", 0)
 			.attr("height", "100%");
 
