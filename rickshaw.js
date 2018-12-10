@@ -4077,95 +4077,54 @@ Rickshaw.Graph.TouchZoom = Rickshaw.Class.create({
 
 	registerMouseEvents: function() {
 		var self = this;
-		var ESCAPE_KEYCODE = 27;
-		var rectangle;
 
-		var drag = {
-			startDt: null,
-			stopDt: null,
-			startPX: null,
-			stopPX: null
-		};
+    var selection = [];
 
-		this.svg.on("mousedown", onMousedown);
+    this.svg.on("touchstart", onTouchstart);
 
-		function onMouseup(datum, index) {
-			drag.stopDt = pointAsDate(d3.event);
-			var windowAfterDrag = [
-				drag.startDt,
-				drag.stopDt
-			].sort(compareNumbers);
+    function onTouchend(){
+      console.log(selection.length);
+      if(selection.length === 2){
+        var sortedSelection = selection.sort();
 
-			self.graph.window.xMin = windowAfterDrag[0];
-			self.graph.window.xMax = windowAfterDrag[1];
+        self.graph.window.xMin = sortedSelection[0];
+        self.graph.window.xMax = sortedSelection[1];
 
-			var endTime = self.graph.window.xMax;
-			var range = self.graph.window.xMax - self.graph.window.xMin;
+        var endTime = self.graph.window.xMax;
+        var range = self.graph.window.xMax - self.graph.window.xMin;
 
-			reset(this);
+        reset(this);
 
-			if (range < self.minimumTimeSelection || isNaN(range)) {
-				return;
-			}
-			self.graph.update();
-			self.callback({range: range, endTime: endTime});
-		}
+  			if (range < self.minimumTimeSelection || isNaN(range)) {
+  				return;
+  			}
+  			self.graph.update();
+  			self.callback({range: range, endTime: endTime});
+      } else {
+        return;
+      }
+    }
 
-		function onMousemove() {
-			var offset = drag.stopPX = (d3.event.offsetX || d3.event.layerX);
-			if (offset > (self.svgWidth - 1) || offset < 1) {
-				return;
-			}
+    function onTouchstart(){
+      if(d3.event.preventDefault) {
+        d3.event.preventDefault();
+      } else {
+        d3.event.returnValue = false;
+      }
 
-			var limits = [drag.startPX, offset].sort(compareNumbers);
-			var selectionWidth = limits[1]-limits[0];
-			if (isNaN(selectionWidth)) {
-				return reset(this);
-			}
-			rectangle.style("opacity", self.opacity)
-      .attr("fill", self.fill)
-			.attr("x", limits[0])
-			.attr("width", selectionWidth);
-		}
+			var date = pointAsDate2(d3.event);
+      selection.push(date);
+      d3.select(document).on("touchend", onTouchend);
 
-		function onMousedown() {
-			var el = d3.select(this);
-			rectangle = el.append("rect")
-			.style("opacity", 0)
-			.attr("y", 0)
-			.attr("height", "100%");
-
-			if(d3.event.preventDefault) {
-				d3.event.preventDefault();
-			} else {
-				d3.event.returnValue = false;
-			}
-			drag.target = d3.event.target;
-			drag.startDt = pointAsDate(d3.event);
-			drag.startPX = d3.event.offsetX || d3.event.layerX;
-			el.on("mousemove", onMousemove);
-			d3.select(document).on("mouseup", onMouseup);
-			d3.select(document).on("keyup", function() {
-				if (d3.event.keyCode === ESCAPE_KEYCODE) {
-					reset(this);
-				}
-			});
-		}
+    }
 
 		function reset(el) {
-			var s = d3.select(el);
-			s.on("mousemove", null);
-			d3.select(document).on("mouseup", null);
-			drag = {};
-			rectangle.remove();
+			d3.select(document).on("touchend", null);
+			selection = [];
 		}
 
-		function compareNumbers(a, b) {
-			return a - b;
-		}
-
-		function pointAsDate(e) {
-			return Math.floor(self.graph.x.invert(e.offsetX || e.layerX));
+    function pointAsDate2(e) {
+			return Math.floor(self.graph.x.invert(e.touches[0].clientX || e.touches[0].pageX));
 		}
 	}
 });
