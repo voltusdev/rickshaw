@@ -4,6 +4,12 @@ Rickshaw.Graph.Renderer.Stack = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 
 	name: 'stack',
 
+	render: function($super, args) {
+		// TODO(butterflyhug): I have absolutely no idea why we need to explicitly
+		//     override the superclass in order to call its implementation here.
+		$super(args);
+	},
+
 	defaults: function($super) {
 
 		return Rickshaw.extend( $super(), {
@@ -17,14 +23,12 @@ Rickshaw.Graph.Renderer.Stack = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 
 		var graph = this.graph;
 
-		var factory = d3.svg.area()
+		return d3.area()
 			.x( function(d) { return graph.x(d.x) } )
 			.y0( function(d) { return graph.y(d.y0) } )
 			.y1( function(d) { return graph.y(d.y + d.y0) } )
-			.interpolate(this.graph.interpolation).tension(this.tension);
-
-		factory.defined && factory.defined( function(d) { return d.y !== null } );
-		return factory;
+			.curve(graph.curve)
+			.defined( function(d) { return d.y !== null } );
 	}
 } );
 

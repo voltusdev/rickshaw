@@ -2,8 +2,6 @@ Rickshaw.namespace('Rickshaw.Fixtures.Time.Local');
 
 Rickshaw.Fixtures.Time.Local = function() {
 
-	var self = this;
-
 	this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 	this.units = [
@@ -18,11 +16,11 @@ Rickshaw.Fixtures.Time.Local = function() {
 		}, {
 			name: 'month',
 			seconds: 86400 * 30.5,
-			formatter: function(d) { return self.months[d.getMonth()] }
+			formatter: function(d) { return this.months[d.getMonth()] }.bind(this)
 		}, {
 			name: 'week',
 			seconds: 86400 * 7,
-			formatter: function(d) { return self.formatDate(d) }
+			formatter: function(d) { return this.formatDate(d) }.bind(this)
 		}, {
 			name: 'day',
 			seconds: 86400,
@@ -30,15 +28,15 @@ Rickshaw.Fixtures.Time.Local = function() {
 		}, {
 			name: '6 hour',
 			seconds: 3600 * 6,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: 'hour',
 			seconds: 3600,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: '15 minute',
 			seconds: 60 * 15,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: 'minute',
 			seconds: 60,
@@ -67,7 +65,7 @@ Rickshaw.Fixtures.Time.Local = function() {
 	};
 
 	this.formatDate = function(d) {
-		return d3.time.format('%b %e')(d);
+		return d3.timeFormat('%b %e')(d);
 	};
 
 	this.formatTime = function(d) {
@@ -81,17 +79,8 @@ Rickshaw.Fixtures.Time.Local = function() {
 		if (unit.name == 'day') {
 
 			var nearFuture = new Date((time + unit.seconds - 1) * 1000);
-
-			var rounded = new Date(0);
-			rounded.setFullYear(nearFuture.getFullYear());
-			rounded.setMonth(nearFuture.getMonth());
-			rounded.setDate(nearFuture.getDate());
-			rounded.setMilliseconds(0);
-			rounded.setSeconds(0);
-			rounded.setMinutes(0);
-			rounded.setHours(0);
-
-			return rounded.getTime() / 1000;
+			nearFuture.setHours(0, 0, 0, 0);
+			return nearFuture.getTime() / 1000;
 		}
 
 		if (unit.name == 'month') {
@@ -102,15 +91,7 @@ Rickshaw.Fixtures.Time.Local = function() {
 			if (floor == time) return time;
 
 			year = date.getFullYear();
-			var month = date.getMonth();
-
-			if (month == 11) {
-				month = 0;
-				year = year + 1;
-			} else {
-				month += 1;
-			}
-
+			var month = date.getMonth() + 1;
 			return new Date(year, month).getTime() / 1000;
 		}
 

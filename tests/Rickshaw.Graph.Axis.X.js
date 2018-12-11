@@ -35,10 +35,10 @@ exports.axis = function(test) {
 
 	xAxis.render();
 
-	var ticks = d3.select(element).selectAll('.x_grid_d3 .tick')
+	var ticks = d3.select(element).selectAll('.x_grid_d3 .tick');
 
-	test.equal(ticks[0].length, 13, "we have some ticks");
-	test.equal(ticks[0][0].getAttribute('data-x-value'), '4');
+	test.equal(ticks._groups[0].length, 13, "we have some ticks");
+	test.equal(ticks._groups[0][0].getAttribute('data-x-value'), '4');
 
 	test.done();
 };

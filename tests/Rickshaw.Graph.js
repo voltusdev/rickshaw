@@ -128,13 +128,13 @@ exports.scales = function(test) {
 		}
 	];
 
-	var scale = d3.time.scale();
+	var scale = d3.scaleTime();
 	var graph = new Rickshaw.Graph({
 		element: el,
 		width: 960,
 		height: 500,
 		xScale: scale,
-		yScale: d3.scale.sqrt(),
+		yScale: d3.scaleSqrt(),
 		series: series
 	});
 
@@ -162,7 +162,7 @@ exports.scales = function(test) {
 	var yTicks = el.getElementsByClassName('y_ticks')[0].getElementsByTagName('g');
 	test.equal(yTicks[0].getAttribute('transform'), 'translate(0,500)');
 	test.equal(yTicks[1].getAttribute('transform'), 'translate(0,275.24400874015976)');
-	test.equal(yTicks[2].getAttribute('transform'), 'translate(0,182.14702893572516)');
+	test.equal(yTicks[2].getAttribute('transform'), 'translate(0,182.14702893572513)');
 
 	// should make a copy mutable object
 	scale.range([0, 960]);
@@ -283,8 +283,8 @@ exports.configure = function(test) {
 	graph.configure({ width: 900, height: 100 });
 
 	test.deepEqual([ graph.width, graph.height ], [ 900, 100 ], "graph dimensions take");
-	test.deepEqual(graph.vis[0][0].getAttribute('width'), 900, "width set on svg");
-	test.deepEqual(graph.vis[0][0].getAttribute('height'), 100, "height set on svg");
+	test.deepEqual(graph.vis._groups[0][0].getAttribute('width'), 900, "width set on svg");
+	test.deepEqual(graph.vis._groups[0][0].getAttribute('height'), 100, "height set on svg");
 
 	test.done();
 };

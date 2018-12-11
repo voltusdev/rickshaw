@@ -14,7 +14,7 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 		return Rickshaw.extend( $super(), {
 			unstack: true,
 			fill: false,
-			stroke: true 
+			stroke: true
 		} );
 	},
 
@@ -26,7 +26,6 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 	},
 
 	domain: function($super) {
-
 		this.graph.stackData();
 
 		var domains = [];
@@ -75,7 +74,7 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 				var ns = "http://www.w3.org/2000/svg";
 				var vis = document.createElementNS(ns, 'g');
 
-				graph.vis[0][0].appendChild(vis);
+				graph.vis._groups[0][0].appendChild(vis);
 
 				var renderer = graph._renderers[series.renderer];
 
@@ -110,6 +109,14 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 	_stack: function(groups) {
 
 		groups.forEach( function(group) {
+			if (group.renderer.unstack) {
+				group.series.forEach(function(series) {
+					series.stack = series.stack.map(function(d) {
+						return Rickshaw.extend({y0: 0}, d);
+					});
+				});
+				return;
+			}
 
 			var series = group.series
 				.filter( function(series) { return !series.disabled } );
@@ -117,15 +124,11 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 			var data = series
 				.map( function(series) { return series.stack } );
 
-			if (!group.renderer.unstack) {
+			var stackedData = Rickshaw.stack(data, group.renderer.offset || d3.stackOffsetNone);
 
-				var layout = d3.layout.stack();
-				var stackedData = Rickshaw.clone(layout(data));
-
-				series.forEach( function(series, index) {
-					series._stack = Rickshaw.clone(stackedData[index]);
-				});
-			}
+			series.forEach( function(series, index) {
+				series.stack = Rickshaw.clone(stackedData[index]);
+			});
 
 		}, this );
 
@@ -154,7 +157,6 @@ Rickshaw.Graph.Renderer.Multi = Rickshaw.Class.create( Rickshaw.Graph.Renderer, 
 			series.active = function() { return series };
 
 			group.renderer.render({ series: series, vis: group.vis });
-			series.forEach(function(s) { s.stack = s._stack || s.stack || s.data; });
 		});
 	}
 

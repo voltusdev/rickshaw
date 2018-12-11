@@ -5,25 +5,23 @@ Rickshaw.Graph.Annotate = function(args) {
 	var graph = this.graph = args.graph;
 	this.elements = { timeline: args.element };
 	
-	var self = this;
-
 	this.data = {};
 
 	this.elements.timeline.classList.add('rickshaw_annotation_timeline');
 
 	this.add = function(time, content, end_time) {
-		self.data[time] = self.data[time] || {'boxes': []};
-		self.data[time].boxes.push({content: content, end: end_time});
-	};
+		this.data[time] = this.data[time] || {'boxes': []};
+		this.data[time].boxes.push({content: content, end: end_time});
+	}.bind(this);
 
 	this.update = function() {
 
-		Rickshaw.keys(self.data).forEach( function(time) {
+		Rickshaw.keys(this.data).forEach( function(time) {
 
-			var annotation = self.data[time];
-			var left = self.graph.x(time);
+			var annotation = this.data[time];
+			var left = this.graph.x(time);
 
-			if (left < 0 || left > self.graph.x.range()[1]) {
+			if (left < 0 || left > this.graph.x.range()[1]) {
 				if (annotation.element) {
 					annotation.line.classList.add('offscreen');
 					annotation.element.style.display = 'none';
@@ -66,12 +64,12 @@ Rickshaw.Graph.Annotate = function(args) {
 
 					annotation.line = document.createElement('div');
 					annotation.line.classList.add('annotation_line');
-					self.graph.element.appendChild(annotation.line);
+					this.graph.element.appendChild(annotation.line);
 
 					if ( box.end ) {
 						box.rangeElement = document.createElement('div');
 						box.rangeElement.classList.add('annotation_range');
-						self.graph.element.appendChild(box.rangeElement);
+						this.graph.element.appendChild(box.rangeElement);
 					}
 
 				}
@@ -79,12 +77,12 @@ Rickshaw.Graph.Annotate = function(args) {
 				if ( box.end ) {
 
 					var annotationRangeStart = left;
-					var annotationRangeEnd   = Math.min( self.graph.x(box.end), self.graph.x.range()[1] );
+					var annotationRangeEnd   = Math.min( this.graph.x(box.end), this.graph.x.range()[1] );
 
 					// annotation makes more sense at end
 					if ( annotationRangeStart > annotationRangeEnd ) {
 						annotationRangeEnd   = left;
-						annotationRangeStart = Math.max( self.graph.x(box.end), self.graph.x.range()[0] );
+						annotationRangeStart = Math.max( this.graph.x(box.end), this.graph.x.range()[0] );
 					}
 
 					var annotationRangeWidth = annotationRangeEnd - annotationRangeStart;
@@ -97,9 +95,9 @@ Rickshaw.Graph.Annotate = function(args) {
 
 				annotation.line.classList.remove('offscreen');
 				annotation.line.style.left = left + 'px';
-			} );
+			}, this );
 		}, this );
 	};
 
-	this.graph.onUpdate( function() { self.update() } );
+	this.graph.onUpdate( function() { this.update() }.bind(this) );
 };

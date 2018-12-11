@@ -2,8 +2,6 @@ Rickshaw.namespace('Rickshaw.Fixtures.Time');
 
 Rickshaw.Fixtures.Time = function() {
 
-	var self = this;
-
 	this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 	this.units = [
@@ -18,11 +16,11 @@ Rickshaw.Fixtures.Time = function() {
 		}, {
 			name: 'month',
 			seconds: 86400 * 30.5,
-			formatter: function(d) { return self.months[d.getUTCMonth()] }
+			formatter: function(d) { return this.months[d.getUTCMonth()] }.bind(this)
 		}, {
 			name: 'week',
 			seconds: 86400 * 7,
-			formatter: function(d) { return self.formatDate(d) }
+			formatter: function(d) { return this.formatDate(d) }.bind(this)
 		}, {
 			name: 'day',
 			seconds: 86400,
@@ -30,15 +28,15 @@ Rickshaw.Fixtures.Time = function() {
 		}, {
 			name: '6 hour',
 			seconds: 3600 * 6,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: 'hour',
 			seconds: 3600,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: '15 minute',
 			seconds: 60 * 15,
-			formatter: function(d) { return self.formatTime(d) }
+			formatter: function(d) { return this.formatTime(d) }.bind(this)
 		}, {
 			name: 'minute',
 			seconds: 60,
@@ -67,7 +65,7 @@ Rickshaw.Fixtures.Time = function() {
 	};
 
 	this.formatDate = function(d) {
-		return d3.time.format('%b %e')(d);
+		return d3.timeFormat('%b %e')(d);
 	};
 
 	this.formatTime = function(d) {
@@ -86,15 +84,7 @@ Rickshaw.Fixtures.Time = function() {
 			if (floor == time) return time;
 
 			year = date.getUTCFullYear();
-			var month = date.getUTCMonth();
-
-			if (month == 11) {
-				month = 0;
-				year = year + 1;
-			} else {
-				month += 1;
-			}
-
+			var month = date.getUTCMonth() + 1;
 			return Date.UTC(year, month) / 1000;
 		}
 

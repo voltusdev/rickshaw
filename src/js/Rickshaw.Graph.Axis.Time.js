@@ -2,8 +2,6 @@ Rickshaw.namespace('Rickshaw.Graph.Axis.Time');
 
 Rickshaw.Graph.Axis.Time = function(args) {
 
-	var self = this;
-
 	this.graph = args.graph;
 	this.elements = [];
 	this.ticksTreatment = args.ticksTreatment || 'plain';
@@ -62,24 +60,24 @@ Rickshaw.Graph.Axis.Time = function(args) {
 
 		offsets.forEach( function(o) {
 			
-			if (self.graph.x(o.value) > self.graph.x.range()[1]) return;
+			if (this.graph.x(o.value) > this.graph.x.range()[1]) return;
 	
 			var element = document.createElement('div');
-			element.style.left = self.graph.x(o.value) + 'px';
+			element.style.left = this.graph.x(o.value) + 'px';
 			element.classList.add('x_tick');
-			element.classList.add(self.ticksTreatment);
+			element.classList.add(this.ticksTreatment);
 
 			var title = document.createElement('div');
 			title.classList.add('title');
 			title.innerHTML = o.unit.formatter(new Date(o.value * 1000));
 			element.appendChild(title);
 
-			self.graph.element.appendChild(element);
-			self.elements.push(element);
+			this.graph.element.appendChild(element);
+			this.elements.push(element);
 
-		} );
+		}.bind(this) );
 	};
 
-	this.graph.onUpdate( function() { self.render() } );
+	this.graph.onUpdate( function() { this.render() }.bind(this) );
 };
 

@@ -52,7 +52,8 @@ JS_FILES=\
 	src/js/Rickshaw.Graph.Socketio.js\
 	src/js/Rickshaw.Series.js\
 	src/js/Rickshaw.Series.FixedDuration.js\
-	src/helpers/endUMD.js.append\
+	src/js/Rickshaw.stack.js\
+	src/helpers/endUMD.js\
 
 .PHONY: clean build
 

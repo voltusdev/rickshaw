@@ -41,8 +41,8 @@ exports.axis = function(test) {
 
 	var ticks = d3.select(chartElement).selectAll('.y_grid .tick')
 
-	test.equal(ticks[0].length, 11, "we have some ticks");
-	test.equal(ticks[0][0].getAttribute('data-y-value'), '0');
+	test.equal(ticks._groups[0].length, 11, "we have some ticks");
+	test.equal(ticks._groups[0][0].getAttribute('data-y-value'), '0');
 
 	test.equal(yAxis.width, 40, "width is set from axis element");
 	test.equal(yAxis.height, 600, "height is set from chart element");

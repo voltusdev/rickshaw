@@ -6,6 +6,7 @@
 
 Rickshaw is a JavaScript toolkit for creating interactive time series graphs, developed at [Shutterstock](http://www.shutterstock.com)
 
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of Contents
@@ -40,6 +41,24 @@ Rickshaw is a JavaScript toolkit for creating interactive time series graphs, de
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## About This Fork
+
+This fork is a port of Rickshaw to work with D3.js version 4.
+
+In keeping with the design of d3 v4, I've made a few small tweaks to the series configuration object:
+
+- `interpolation`: The d3 v3-style strings are still supported for this property, but now it also accepts the [curve factory functions](https://github.com/d3/d3-shape#curves) introduced in v4.
+- `tension`: This is still supported (for now), but I think it's more consistent with d3 v4's design if you configure a `d3.curveCardinal()` factory and provide that for `interpolation` instead of relying on this config property.
+- `offset`: The d3 v3-style strings are still supported for this property, but now it also accepts the [stack offset functions](https://github.com/d3/d3-shape#stack-offsets) introduced in v4.
+
+There are also a few known bugs:
+
+- The `RangeSlider.Preview` graph is rendering incorrectly when using the "multi" renderer with multiple Y-axes -- e.g. [the "multi" example](examples/multi.html) renders the `Preview` graph at half its intended height.
+- Tension values for `curveCardinal` aren't producing the same rendering as corresponding d3v3 configuration.  I haven't investigated to know if this is reasonable or not.
+
+PRs are more than welcome to fix these issues!
 
 
 ## Getting Started

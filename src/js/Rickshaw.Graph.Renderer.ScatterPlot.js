@@ -15,10 +15,6 @@ Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create( Rickshaw.Graph.Rend
 		} );
 	},
 
-	initialize: function($super, args) {
-		$super(args);
-	},
-
 	render: function(args) {
 
 		args = args || {};
@@ -48,7 +44,7 @@ Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create( Rickshaw.Graph.Rend
 				nodes.classed(series.className, true);
 			}
 
-			Array.prototype.forEach.call(nodes[0], function(n) {
+			nodes.nodes().forEach(function(n) {
 				n.setAttribute('fill', series.color);
 			} );
 
