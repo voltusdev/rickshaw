@@ -33,12 +33,23 @@ for (var i = 0; i < 150; i++) {
 }
 
 // instantiate our graph!
+console.log(seriesData)
+
+var d = new Date();
+d.setHours(d.getHours() + 1);
 
 var graph = new Rickshaw.Graph( {
 	element: document.getElementById("chart"),
 	width: 960,
 	height: 500,
 	renderer: 'line',
+	bands: [{
+		color: "#000000",
+		from: d/1000,
+        to: Number(d)/1000+(60*60),
+        name: "Weekend",
+        opacity: 0.3
+	}],
 	series: [
 		{
 			color: "#c05020",

@@ -31,7 +31,6 @@ Rickshaw.Graph = function(args) {
 	};
 
 	this.initialize = function(args) {
-
 		if (!args.element) throw "Rickshaw.Graph needs a reference to an element";
 		if (args.element.nodeType !== 1) throw "Rickshaw.Graph element was defined but not an HTML element";
 
@@ -56,6 +55,7 @@ Rickshaw.Graph = function(args) {
 		this._loadRenderers();
 		this.configure(args);
 		this.setSeries(args.series);
+		this.setBands(args.bands);
 
 		this.setSize({ width: args.width, height: args.height });
 		this.element.classList.add('rickshaw_graph');
@@ -69,6 +69,7 @@ Rickshaw.Graph = function(args) {
 	};
 
 	this._loadRenderers = function() {
+		this._bandRenderer = new Rickshaw.Graph.Band( { graph: self } );
 
 		for (var name in Rickshaw.Graph.Renderer) {
 			if (!name || !Rickshaw.Graph.Renderer.hasOwnProperty(name)) continue;
@@ -125,6 +126,16 @@ Rickshaw.Graph = function(args) {
 		this.series.active = function() { return self.series.filter( function(s) { return !s.disabled } ) };
 	};
 
+	this.setBands = function(bands) {
+		// TODO: validate bands
+		this.bands = bands || [];
+		this.bands.active = function() { return self.bands.filter( function(s) { return !s.disabled } ) };
+	};
+
+	this.renderBands = function() {
+		this._bandRenderer.render();
+	};
+
 	this.dataDomain = function() {
 
 		var data = this.series.map( function(s) { return s.data } );
@@ -162,6 +173,7 @@ Rickshaw.Graph = function(args) {
 		this.discoverRange();
 
 		this.renderer.render();
+		this.renderBands();
 
 		this.updateCallbacks.forEach( function(callback) {
 			callback();
