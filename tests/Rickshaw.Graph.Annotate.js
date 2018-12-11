@@ -46,7 +46,7 @@ exports.initialize = function(test) {
 
   test.equal(annotate.elements.timeline, annotateElement);
   var timeline = d3.select(element).selectAll('.rickshaw_annotation_timeline');
-  test.equal(annotate.element, timeline[0][0]);
+  test.equal(annotate.element, timeline._groups[0][0]);
 
   test.done();
 };
@@ -101,7 +101,7 @@ exports.update = function(test) {
 
   var clickEvent = global.document.createEvent('Event');
   clickEvent.initEvent('click', true, true);
-  var addedElement = d3.select(annotateElement).selectAll('.annotation')[0][0];
+  var addedElement = d3.select(annotateElement).selectAll('.annotation')._groups[0][0];
   addedElement.dispatchEvent(clickEvent);
 
   test.deepEqual(addedElement.classList, {
