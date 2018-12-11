@@ -53,7 +53,7 @@ JS_FILES=\
 	src/js/Rickshaw.Series.js\
 	src/js/Rickshaw.Series.FixedDuration.js\
 	src/js/Rickshaw.stack.js\
-	src/helpers/endUMD.js\
+	src/helpers/endUMD.js.append\
 
 .PHONY: clean build
 
