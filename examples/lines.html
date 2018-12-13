@@ -32,12 +32,10 @@ for (var i = 0; i < 150; i++) {
 	random.addData(seriesData);
 }
 
-// instantiate our graph!
-console.log(seriesData)
-
 var d = new Date();
 d.setHours(d.getHours() + 1);
 
+// instantiate our graph!
 var graph = new Rickshaw.Graph( {
 	element: document.getElementById("chart"),
 	width: 960,

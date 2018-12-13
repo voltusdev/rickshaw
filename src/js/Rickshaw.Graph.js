@@ -126,8 +126,33 @@ Rickshaw.Graph = function(args) {
 		this.series.active = function() { return self.series.filter( function(s) { return !s.disabled } ) };
 	};
 
+	this.validateBands = function(bands) {
+
+		if (!Array.isArray(bands)) {
+			var seriesSignature = Object.prototype.toString.apply(bands);
+			throw "bands is not an array: " + seriesSignature;
+		}
+
+		bands.forEach( function(b) {
+
+			if (!(b instanceof Object)) {
+				throw "bands element is not an object: " + b;
+			}
+			if (!(b.from)) {
+				throw "series has no from value: " + JSON.stringify(b);
+			}
+			if (!(b.to)) {
+				throw "series has no to value: " + JSON.stringify(b);
+			}
+
+			// TODO: What to do about opacity and color? Define defaults
+			// or throw errors for them here.
+
+		}, this );
+	};
+
 	this.setBands = function(bands) {
-		// TODO: validate bands
+		this.validateBands(bands);
 		this.bands = bands || [];
 		this.bands.active = function() { return self.bands.filter( function(s) { return !s.disabled } ) };
 	};
