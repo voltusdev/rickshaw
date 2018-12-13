@@ -32,13 +32,22 @@ for (var i = 0; i < 150; i++) {
 	random.addData(seriesData);
 }
 
-// instantiate our graph!
+var d = new Date();
+d.setHours(d.getHours() + 1);
 
+// instantiate our graph!
 var graph = new Rickshaw.Graph( {
 	element: document.getElementById("chart"),
 	width: 960,
 	height: 500,
 	renderer: 'line',
+	bands: [{
+		color: "#30c020",
+		from: d/1000,
+		to: Number(d)/1000+(60*60),
+		name: "Weekend",
+		opacity: 0.2
+	}],
 	series: [
 		{
 			color: "#c05020",

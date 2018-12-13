@@ -31,7 +31,6 @@ Rickshaw.Graph = function(args) {
 	};
 
 	this.initialize = function(args) {
-
 		if (!args.element) throw "Rickshaw.Graph needs a reference to an element";
 		if (args.element.nodeType !== 1) throw "Rickshaw.Graph element was defined but not an HTML element";
 
@@ -56,6 +55,7 @@ Rickshaw.Graph = function(args) {
 		this._loadRenderers();
 		this.configure(args);
 		this.setSeries(args.series);
+		this.setBands(args.bands);
 
 		this.setSize({ width: args.width, height: args.height });
 		this.element.classList.add('rickshaw_graph');
@@ -69,6 +69,7 @@ Rickshaw.Graph = function(args) {
 	};
 
 	this._loadRenderers = function() {
+		this._bandRenderer = new Rickshaw.Graph.Band( { graph: self } );
 
 		for (var name in Rickshaw.Graph.Renderer) {
 			if (!name || !Rickshaw.Graph.Renderer.hasOwnProperty(name)) continue;
@@ -125,6 +126,41 @@ Rickshaw.Graph = function(args) {
 		this.series.active = function() { return self.series.filter( function(s) { return !s.disabled } ) };
 	};
 
+	this.validateBands = function(bands) {
+
+		if (!Array.isArray(bands)) {
+			var seriesSignature = Object.prototype.toString.apply(bands);
+			throw "bands is not an array: " + seriesSignature;
+		}
+
+		bands.forEach( function(b) {
+
+			if (!(b instanceof Object)) {
+				throw "bands element is not an object: " + b;
+			}
+			if (!(b.from)) {
+				throw "series has no from value: " + JSON.stringify(b);
+			}
+			if (!(b.to)) {
+				throw "series has no to value: " + JSON.stringify(b);
+			}
+
+			// TODO: What to do about opacity and color? Define defaults
+			// or throw errors for them here.
+
+		}, this );
+	};
+
+	this.setBands = function(bands) {
+		this.bands = bands || [];
+		this.validateBands(this.bands);
+		this.bands.active = function() { return self.bands.filter( function(s) { return !s.disabled } ) };
+	};
+
+	this.renderBands = function() {
+		this._bandRenderer.render();
+	};
+
 	this.dataDomain = function() {
 
 		var data = this.series.map( function(s) { return s.data } );
@@ -162,6 +198,7 @@ Rickshaw.Graph = function(args) {
 		this.discoverRange();
 
 		this.renderer.render();
+		this.renderBands();
 
 		this.updateCallbacks.forEach( function(callback) {
 			callback();
