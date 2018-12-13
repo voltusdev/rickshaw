@@ -152,8 +152,8 @@ Rickshaw.Graph = function(args) {
 	};
 
 	this.setBands = function(bands) {
-		this.validateBands(bands);
 		this.bands = bands || [];
+		this.validateBands(this.bands);
 		this.bands.active = function() { return self.bands.filter( function(s) { return !s.disabled } ) };
 	};
 
