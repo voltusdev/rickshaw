@@ -163,7 +163,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 		// Use the first graph as the "master" for the frame state
 		var masterGraph = this.graphs[0];
 
-		var domainScale = d3.scale.linear()
+		var domainScale = d3.scaleLinear()
 			.domain([0, this.previewWidth])
 			.range(masterGraph.dataDomain());
 
@@ -181,13 +181,14 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 			this.currentFrame[1] = (this.currentFrame[0] || 0) + self.config.minimumFrameWidth;
 		}
 
-		this.svg.enter()
+		this.svg = this.svg.enter()
 			.append("svg")
 			.classed("rickshaw_range_slider_preview", true)
 			.style("height", this.config.height + "px")
 			.style("width", this.config.width + "px")
 			.style("position", "absolute")
-			.style("top", 0);
+			.style("top", 0)
+			.merge(this.svg);
 
 		this._renderDimming();
 		this._renderFrame();
@@ -204,12 +205,13 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 			.selectAll("path.dimming")
 			.data([null]);
 
-		element.enter()
+		element = element.enter()
 			.append("path")
 			.attr("fill", "white")
 			.attr("fill-opacity", "0.7")
 			.attr("fill-rule", "evenodd")
-			.classed("dimming", true);
+			.classed("dimming", true)
+			.merge(element);
 
 		var path = "";
 		path += " M " + this.config.frameHandleThickness + " " + this.config.frameTopThickness;
@@ -232,7 +234,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 			.selectAll("path.frame")
 			.data([null]);
 
-		element.enter()
+		element = element.enter()
 			.append("path")
 			.attr("stroke", "white")
 			.attr("stroke-width", "1px")
@@ -240,7 +242,8 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 			.attr("fill", this.config.frameColor)
 			.attr("fill-opacity", this.config.frameOpacity)
 			.attr("fill-rule", "evenodd")
-			.classed("frame", true);
+			.classed("frame", true)
+			.merge(element);
 
 		var path = "";
 		path += " M " + this.currentFrame[0] + " 0";
@@ -262,10 +265,11 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 		var gripper = this.svg.selectAll("path.gripper")
 			.data([null]);
 
-		gripper.enter()
+		gripper = gripper.enter()
 			.append("path")
 			.attr("stroke", this.config.gripperColor)
-			.classed("gripper", true);
+			.classed("gripper", true)
+			.merge(gripper);
 
 		var path = "";
 
@@ -284,12 +288,13 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 		var leftHandle = this.svg.selectAll("rect.left_handle")
 			.data([null]);
 
-		leftHandle.enter()
+		leftHandle = leftHandle.enter()
 			.append("rect")
 			.attr('width', this.config.frameHandleThickness)
 			.style("cursor", "ew-resize")
 			.style("fill-opacity", "0")
-			.classed("left_handle", true);
+			.classed("left_handle", true)
+			.merge(leftHandle);
 
 		leftHandle
 			.attr('x', this.currentFrame[0])
@@ -298,12 +303,13 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 		var rightHandle = this.svg.selectAll("rect.right_handle")
 			.data([null]);
 
-		rightHandle.enter()
+		rightHandle = rightHandle.enter()
 			.append("rect")
 			.attr('width', this.config.frameHandleThickness)
 			.style("cursor", "ew-resize")
 			.style("fill-opacity", "0")
-			.classed("right_handle", true);
+			.classed("right_handle", true)
+			.merge(rightHandle);
 
 		rightHandle
 			.attr('x', this.currentFrame[1] + this.config.frameHandleThickness)
@@ -315,11 +321,12 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 		var middleHandle = this.svg.selectAll("rect.middle_handle")
 			.data([null]);
 
-		middleHandle.enter()
+		middleHandle = middleHandle.enter()
 			.append("rect")
 			.style("cursor", "move")
 			.style("fill-opacity", "0")
-			.classed("middle_handle", true);
+			.classed("middle_handle", true)
+			.merge(middleHandle);
 
 		middleHandle
 			.attr('width', Math.max(0, this.currentFrame[1] - this.currentFrame[0]))
@@ -381,7 +388,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 
 			self.graphs.forEach(function(graph) {
 
-				var domainScale = d3.scale.linear()
+				var domainScale = d3.scaleLinear()
 					.interpolate(d3.interpolateNumber)
 					.domain([0, self.previewWidth])
 					.range(graph.dataDomain());

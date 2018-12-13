@@ -4,6 +4,32 @@ Rickshaw.Graph = function(args) {
 
 	var self = this;
 
+	// Compatibility mappings to look up the d3v4 functions for d3v3 strings.
+	var curves = {
+		'basis': d3.curveBasis,
+		'basis-closed': d3.curveBasisClosed,
+		'basis-open': d3.curveBasisOpen,
+		'bundle': d3.curveBundle,
+		'cardinal': d3.curveCardinal,
+		'cardinal-closed': d3.curveCardinalClosed,
+		'cardinal-open': d3.curveCardinalOpen,
+		'linear': d3.curveLinear,
+		'monotone': d3.curveMonotoneX,
+		'step-after': d3.curveStepAfter,
+		'step-before': d3.curveStepBefore
+	};
+	var offsets = {
+		'zero': d3.stackOffsetNone,
+		'wiggle': d3.stackOffsetWiggle,
+		'expand': d3.stackOffsetExpand,
+		'silhouette': d3.stackOffsetSilhouette
+	};
+	var orderings = {
+		'inside-out': d3.stackOrderInsideOut,
+		'reverse': d3.stackOrderReverse,
+		'default': d3.stackOrderNone
+	};
+
 	this.initialize = function(args) {
 
 		if (!args.element) throw "Rickshaw.Graph needs a reference to an element";
@@ -18,7 +44,7 @@ Rickshaw.Graph = function(args) {
 
 		this.defaults = {
 			interpolation: 'cardinal',
-			offset: 'zero',
+			offset: d3.stackOffsetNone,
 			min: undefined,
 			max: undefined,
 			preserve: false,
@@ -118,14 +144,14 @@ Rickshaw.Graph = function(args) {
 		// with other Graphs. We need to ensure we copy the scale
 		// so that our mutations do not change the object given to us.
 		// Hence the .copy()
-		this.x = (this.xScale || d3.scale.linear()).copy().domain(domain.x).range([0, this.width]);
-		this.y = (this.yScale || d3.scale.linear()).copy().domain(domain.y).range([this.height, 0]);
+		this.x = (this.xScale || d3.scaleLinear()).copy().domain(domain.x).range([0, this.width]);
+		this.y = (this.yScale || d3.scaleLinear()).copy().domain(domain.y).range([this.height, 0]);
 
-		this.x.magnitude = d3.scale.linear()
+		this.x.magnitude = d3.scaleLinear()
 			.domain([domain.x[0] - domain.x[0], domain.x[1] - domain.x[0]])
 			.range([0, this.width]);
 
-		this.y.magnitude = d3.scale.linear()
+		this.y.magnitude = d3.scaleLinear()
 			.domain([domain.y[0] - domain.y[0], domain.y[1] - domain.y[0]])
 			.range([0, this.height]);
 	};
@@ -184,20 +210,15 @@ Rickshaw.Graph = function(args) {
 		if (!this.renderer.unstack) {
 
 			this._validateStackable();
+			stackedData = Rickshaw.stack(data, this.offset || d3.stackOffsetNone);
 
-			var layout = d3.layout.stack();
-			layout.offset( self.offset );
-			stackedData = layout(data);
-		}
-
-		stackedData = stackedData || data;
-
-		if (this.renderer.unstack) {
-			stackedData.forEach( function(seriesData) {
+		} else {
+			data.forEach( function(seriesData) {
 				seriesData.forEach( function(d) {
 					d.y0 = d.y0 === undefined ? 0 : d.y0;
 				} );
 			} );
+			stackedData = data;
 		}
 
 		this.stackData.hooks.after.forEach( function(entry) {
@@ -278,6 +299,12 @@ Rickshaw.Graph = function(args) {
 		Rickshaw.keys(this.config).forEach( function(k) {
 			this[k] = this.config[k];
 		}, this );
+		this.curve = curves[this.interpolation] || this.interpolation;
+		if (this.interpolation === 'cardinal' && this.tension) {
+			this.curve = this.curve.tension(this.tension);
+		}
+		this.offset = offsets[this.offset] || this.offset;
+		this.order = orderings[this.order] || this.order;
 
 		if ('stack' in args) args.unstack = !args.stack;
 

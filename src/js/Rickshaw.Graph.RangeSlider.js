@@ -5,7 +5,6 @@ Rickshaw.Graph.RangeSlider = Rickshaw.Class.create({
 	initialize: function(args) {
 
 		var $ = jQuery;
-		var self = this;
 		var element = this.element = args.element;
 		var graphs = this.graphs = args.graphs;
 		if (!graphs) {
@@ -22,14 +21,12 @@ Rickshaw.Graph.RangeSlider = Rickshaw.Class.create({
 
 		for (var i = 0; i < graphs.length; i++) {
 			graphs[i].onUpdate(function() {
-				self.update();
-			}.bind(self));
+				this.update();
+			}.bind(this));
 
-			(function(idx){
-				graphs[idx].onConfigure(function() {
-					$(this.element)[0].style.width = graphs[idx].width + 'px';
-				}.bind(self));
-			})(i);
+			graphs[i].onConfigure(function(graph) {
+				$(element)[0].style.width = graph.width + 'px';
+			}.bind(this, graphs[i]));
 		}
 
 	},
@@ -154,4 +151,3 @@ Rickshaw.Graph.RangeSlider = Rickshaw.Class.create({
 		return;
 	}
 });
-

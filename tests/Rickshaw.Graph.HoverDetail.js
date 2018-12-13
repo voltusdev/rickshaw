@@ -52,8 +52,8 @@ exports.initialize = function(test) {
   test.equal(typeof hoverDetail.yFormatter, 'function', 'we have a default yFormatter');
 
   var detail = d3.select(element).selectAll('.detail')
-  test.equal(hoverDetail.element, detail[0][0]);
-  test.equal(detail[0].length, 1, 'we have a div for hover detail');
+  test.equal(hoverDetail.element, detail._groups[0][0]);
+  test.equal(detail._groups[0].length, 1, 'we have a div for hover detail');
 
   test.done();
 };
@@ -136,7 +136,7 @@ exports.render = function(test) {
   });
 
   var items = d3.select(element).selectAll('.item');
-  test.equal(items[0].length, 0, 'we if y is null nothing is rendered');
+  test.equal(items._groups[0].length, 0, 'we if y is null nothing is rendered');
 
   hoverDetail.render({
     points: [{
@@ -162,15 +162,15 @@ exports.render = function(test) {
   test.equal(hoverDetail.onRender.calledOnce, true, 'calls onRender');
 
   var xLabel = d3.select(element).selectAll('.x_label');
-  test.equal(xLabel[0].length, 1, 'we have a div for x label');
-  test.equal(xLabel[0][0].innerHTML, '4 foo', 'x label shows formatted x value');
+  test.equal(xLabel._groups[0].length, 1, 'we have a div for x label');
+  test.equal(xLabel._groups[0][0].innerHTML, '4 foo', 'x label shows formatted x value');
 
   var items = d3.select(element).selectAll('.item');
-  test.equal(items[0].length, 1, 'we have a div for hover detail');
-  test.equal(items[0][0].innerHTML, 'testseries:&nbsp;32 bar', 'item shows series label and formatted y value');
+  test.equal(items._groups[0].length, 1, 'we have a div for hover detail');
+  test.equal(items._groups[0][0].innerHTML, 'testseries:&nbsp;32 bar', 'item shows series label and formatted y value');
 
   var dots = d3.select(element).selectAll('.dot');
-  test.equal(dots[0].length, 1, 'we have a div for hover dot');
+  test.equal(dots._groups[0].length, 1, 'we have a div for hover dot');
 
   hoverDetail.hide();
   test.equal(hoverDetail.onHide.calledOnce, true, 'calls onHide');
@@ -223,7 +223,7 @@ exports.update = function(test) {
   element.dispatchEvent(moveEvent);
   test.equal(hoverDetail.render.calledOnce, false, 'update is only called on path, svg, rect, circle');
 
-  var svg = d3.select(element).selectAll('svg')[0][0];
+  var svg = d3.select(element).selectAll('svg')._groups[0][0];
   moveEvent.target = svg;
   svg.dispatchEvent(moveEvent);
   test.equal(hoverDetail.render.calledOnce, true, 'update calls render if visible');
@@ -278,7 +278,7 @@ exports.listeners = function(test) {
   test.equal(hoverDetail.onHide.calledOnce, true, 'calls onHide');
   test.equal(hoverDetail.visible, false);
 
-  // simulating clearing the element's html in 
+  // simulating clearing the element's html in
   // angular/backbone/react or other SPA framework
   test.equal(hoverDetail.element.parentNode, element);
   test.equal(element.childNodes.length, 2, 'has two child nodes');

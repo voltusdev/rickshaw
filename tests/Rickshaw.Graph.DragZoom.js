@@ -65,21 +65,21 @@ exports.drag = function(test) {
 	test.equal(graph.renderer.name, drag.graph.renderer.name);
 	test.equal(drag.svgWidth, 960);
 
-	var rect = d3.select(element).selectAll('rect')[0][0];
+	var rect = d3.select(element).selectAll('rect')._groups[0][0];
 	test.equal(rect, undefined, 'we dont have a rect for drawing drag zoom');
 
 	var event = global.document.createEvent('MouseEvent');
 	event.initMouseEvent('mousedown', true, true, window, 1, 800, 600, 290, 260, false, false, false, false, 0, null);
 	test.equal(event.screenX, 800, 'jsdom initMouseEvent works');
-	drag.svg[0][0].dispatchEvent(event);
+	drag.svg._groups[0][0].dispatchEvent(event);
 
-	rect = d3.select(element).selectAll('rect')[0][0];
+	rect = d3.select(element).selectAll('rect')._groups[0][0];
 	test.ok(rect, 'after mousedown we have a rect for drawing drag zoom');
 	test.equal(rect.style.opacity, drag.opacity);
 
 	event = global.document.createEvent('MouseEvent');
 	event.initMouseEvent('mousemove', true, true, window, 1, 900, 600, 290, 260, false, false, false, false, 0, null);
-	drag.svg[0][0].dispatchEvent(event);
+	drag.svg._groups[0][0].dispatchEvent(event);
 
 	// TODO offsetX is not currently set on d3.event in d3 v3 when run with jsdom
 	test.equal(rect.attributes.fill, null);
@@ -144,15 +144,15 @@ exports.notDrag = function(test) {
 	test.equal(graph.renderer.name, drag.graph.renderer.name);
 	test.equal(drag.svgWidth, 960);
 
-	var rect = d3.select(element).selectAll('rect')[0][0];
+	var rect = d3.select(element).selectAll('rect')._groups[0][0];
 	test.equal(rect, undefined, 'we dont have a rect for drawing drag zoom');
 
 	var event = global.document.createEvent('MouseEvent');
 	event.initMouseEvent('mousedown', true, true, window, 1, 800, 600, 290, 260, false, false, false, false, 0, null);
 	test.equal(event.screenX, 800, 'jsdom initMouseEvent works');
-	drag.svg[0][0].dispatchEvent(event);
+	drag.svg._groups[0][0].dispatchEvent(event);
 
-	rect = d3.select(element).selectAll('rect')[0][0];
+	rect = d3.select(element).selectAll('rect')._groups[0][0];
 	test.ok(rect, 'after mousedown we have a rect for drawing drag zoom');
 	test.equal(rect.style.opacity, drag.opacity);
 
@@ -160,13 +160,13 @@ exports.notDrag = function(test) {
 	event.initMouseEvent('mouseup', true, true, window, 1, 900, 600, 290, 260, false, false, false, false, 0, null);
 	global.document.dispatchEvent(event);
 
-	rect = d3.select(element).selectAll('rect')[0][0];
+	rect = d3.select(element).selectAll('rect')._groups[0][0];
 	test.equal(rect, null, 'after mouseup rect is gone');
 
 	// This is not reproduceable in the browser
 	event = global.document.createEvent('MouseEvent');
 	event.initMouseEvent('mousedown', true, true, window, 1, 800, 600, 290, 260, false, false, false, false, 0, null);
-	drag.svg[0][0].dispatchEvent(event);
+	drag.svg._groups[0][0].dispatchEvent(event);
 	test.equal(rect, null, 'after mouseup mousedown listener is gone');
 
 	test.done();

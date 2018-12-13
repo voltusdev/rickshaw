@@ -5,8 +5,6 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 	this.graph = args.graph;
 	this.legend = args.legend;
 
-	var self = this;
-
 	this.addAnchor = function(line) {
 
 		var anchor = document.createElement('a');
@@ -24,56 +22,56 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 				line.element.classList.add('disabled');
 			}
 
-			self.graph.update();
+			this.graph.update();
 
 		}.bind(this);
 		
-                var label = line.element.getElementsByTagName('span')[0];
-                label.onclick = function(e){
+		var label = line.element.getElementsByTagName('span')[0];
+		label.onclick = function(e){
 
-                        var disableAllOtherLines = line.series.disabled;
-                        if ( ! disableAllOtherLines ) {
-                                for ( var i = 0; i < self.legend.lines.length; i++ ) {
-                                        var l = self.legend.lines[i];
-                                        if ( line.series === l.series ) {
-                                                // noop
-                                        } else if ( l.series.disabled ) {
-                                                // noop
-                                        } else {
-                                                disableAllOtherLines = true;
-                                                break;
-                                        }
-                                }
-                        }
+			var disableAllOtherLines = line.series.disabled;
+			if ( ! disableAllOtherLines ) {
+				for ( var i = 0; i < this.legend.lines.length; i++ ) {
+					var l = this.legend.lines[i];
+					if ( line.series === l.series ) {
+						// noop
+					} else if ( l.series.disabled ) {
+						// noop
+					} else {
+						disableAllOtherLines = true;
+						break;
+					}
+				}
+			}
 
-                        // show all or none
-                        if ( disableAllOtherLines ) {
+			// show all or none
+			if ( disableAllOtherLines ) {
 
-                                // these must happen first or else we try ( and probably fail ) to make a no line graph
-                                line.series.enable();
-                                line.element.classList.remove('disabled');
+				// these must happen first or else we try ( and probably fail ) to make a no line graph
+				line.series.enable();
+				line.element.classList.remove('disabled');
 
-                                self.legend.lines.forEach(function(l){
-                                        if ( line.series === l.series ) {
-                                                // noop
-                                        } else {
-                                                l.series.disable();
-                                                l.element.classList.add('disabled');
-                                        }
-                                });
+				this.legend.lines.forEach(function(l){
+					if ( line.series === l.series ) {
+						// noop
+					} else {
+						l.series.disable();
+						l.element.classList.add('disabled');
+					}
+				});
 
-                        } else {
+			} else {
 
-                                self.legend.lines.forEach(function(l){
-                                        l.series.enable();
-                                        l.element.classList.remove('disabled');
-                                });
+				this.legend.lines.forEach(function(l){
+					l.series.enable();
+					l.element.classList.remove('disabled');
+				});
 
-                        }
+			}
 
-                        self.graph.update();
+			this.graph.update();
 
-                };
+		}.bind(this);
 
 	};
 
@@ -97,8 +95,8 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 		}
 
 		this.legend.lines.forEach( function(l) {
-			self.addAnchor(l);
-		} );
+			this.addAnchor(l);
+		}.bind(this) );
 	}
 
 	this._addBehavior = function() {
@@ -107,12 +105,12 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 			
 			s.disable = function() {
 
-				if (self.graph.series.length <= 1) {
+				if (this.graph.series.length <= 1) {
 					throw('only one series left');
 				}
 				
 				s.disabled = true;
-			};
+			}.bind(this);
 
 			s.enable = function() {
 				s.disabled = false;

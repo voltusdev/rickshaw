@@ -6,7 +6,7 @@
 	<link type="text/css" rel="stylesheet" href="../src/css/legend.css">
 	<link type="text/css" rel="stylesheet" href="css/extensions.css?v=2">
 
-	<script src="../node_modules/d3/d3.min.js"></script>
+	<script src="../node_modules/d3/build/d3.min.js"></script>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	<script>
@@ -15,34 +15,7 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
 
-	<script src="../src/js/Rickshaw.js"></script>
-	<script src="../src/js/Rickshaw.Class.js"></script>
-	<script src="../src/js/Rickshaw.Compat.ClassList.js"></script>
-	<script src="../src/js/Rickshaw.Graph.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Renderer.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Renderer.Area.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Renderer.Line.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Renderer.Bar.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Renderer.ScatterPlot.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Renderer.Stack.js"></script>
-	<script src="../src/js/Rickshaw.Graph.RangeSlider.js"></script>
-	<script src="../src/js/Rickshaw.Graph.RangeSlider.Preview.js"></script>
-	<script src="../src/js/Rickshaw.Graph.HoverDetail.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Annotate.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Legend.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Axis.Time.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Behavior.Series.Toggle.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Behavior.Series.Order.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Behavior.Series.Highlight.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Smoother.js"></script>
-	<script src="../src/js/Rickshaw.Fixtures.Time.js"></script>
-	<script src="../src/js/Rickshaw.Fixtures.Time.Local.js"></script>
-	<script src="../src/js/Rickshaw.Fixtures.Number.js"></script>
-	<script src="../src/js/Rickshaw.Fixtures.RandomData.js"></script>
-	<script src="../src/js/Rickshaw.Fixtures.Color.js"></script>
-	<script src="../src/js/Rickshaw.Color.Palette.js"></script>
-	<script src="../src/js/Rickshaw.Graph.Axis.Y.js"></script>
-
+	<script src="../rickshaw.js"></script>
 	<script src="js/extensions.js"></script>
 </head>
 <body>
@@ -268,7 +241,7 @@ addAnnotation(true);
 setTimeout( function() { setInterval( addAnnotation, 6000 ) }, 6000 );
 
 var previewXAxis = new Rickshaw.Graph.Axis.Time({
-	graph: preview.previews[0],
+	graph: preview.graph,
 	timeFixture: new Rickshaw.Fixtures.Time.Local(),
 	ticksTreatment: ticksTreatment
 });

@@ -165,17 +165,17 @@
 }
 
 .rickshaw_graph .annotation_range {
-        background: rgba(0, 0, 0, 0.1);
-        display: none;
-        position: absolute;
-        top: 0;
-        bottom: -6px;
+	background: rgba(0, 0, 0, 0.1);
+	display: none;
+	position: absolute;
+	top: 0;
+	bottom: -6px;
 }
 .rickshaw_graph .annotation_range.active {
-        display: block;
+	display: block;
 }
 .rickshaw_graph .annotation_range.active.offscreen {
-        display: none;
+	display: none;
 }
 
 .rickshaw_annotation_timeline .annotation .content {
@@ -222,20 +222,20 @@
 	fill: none;
 }
 .rickshaw_graph .y_ticks .tick line,
-.rickshaw_graph .x_ticks_d3 .tick {
+.rickshaw_graph .x_ticks_d3 .tick line {
 	stroke: rgba(0, 0, 0, 0.16);
 	stroke-width: 2px;
 	shape-rendering: crisp-edges;
 	pointer-events: none;
 }
-.rickshaw_graph .y_grid .tick,
-.rickshaw_graph .x_grid_d3 .tick {
+.rickshaw_graph .y_grid .tick line,
+.rickshaw_graph .x_grid_d3 .tick line {
 	z-index: -1;
 	stroke: rgba(0, 0, 0, 0.20);
 	stroke-width: 1px;
 	stroke-dasharray: 1 1;
 }
-.rickshaw_graph .y_grid .tick[data-y-value="0"] {
+.rickshaw_graph .y_grid .tick[data-y-value="0"] line {
 	stroke-dasharray: 1 0;
 }
 .rickshaw_graph .y_grid path,
