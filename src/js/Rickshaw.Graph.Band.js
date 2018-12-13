@@ -14,16 +14,6 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
 		var vis = args.vis || graph.vis;
 		bands.forEach(function(band) {
 			var width = graph.x(band.to) - graph.x(band.from);
-			if (band.name) {
-				vis
-					.insert("text", "path")
-					.attr("x", graph.x(band.from) + width/2)
-					.attr("y", 0)
-					.attr("width", width)
-					.attr("dy", "1em")
-					.style("text-anchor", "middle")
-					.text(band.name);
-			}
 			vis
 				.insert("rect", "path")
 				.attr("x", graph.x(band.from))
@@ -32,6 +22,19 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
 				.attr("height", "100%")
 				.attr("opacity", band.opacity)
 				.attr("fill", band.color);
+			if (band.name) {
+				vis
+					.insert("text", "path")
+					.attr("x", graph.x(band.from) + width / 2)
+					.attr("y", 0)
+					.attr("width", width)
+					.attr("dy", "1.2em")
+					.style("text-anchor", "middle")
+					.style("font-size", "12px")
+					.style("fill", "#000000")
+					.style("opacity", "0.5")
+					.text(band.name);
+			}
 		}, this);
 	}
 });
