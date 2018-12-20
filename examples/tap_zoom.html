@@ -1,0 +1,45 @@
+<!doctype html>
+<link type="text/css" rel="stylesheet" href="../src/css/graph.css">
+<link type="text/css" rel="stylesheet" href="../rickshaw.css">
+<link type="text/css" rel="stylesheet" href="css/lines.css">
+
+<script src="../node_modules/d3/build/d3.min.js"></script>
+<script src="../rickshaw.js"></script>
+
+<div id="chart"></div>
+<div id="preview"></div>
+
+<script>
+
+var seriesData = [ [], [] ];
+var random = new Rickshaw.Fixtures.RandomData(150);
+
+for (var i = 0; i < 150; i++) {
+	random.addData(seriesData);
+}
+
+var graph = new Rickshaw.Graph( {
+	element: document.getElementById("chart"),
+	width: 960,
+	height: 400,
+	renderer: 'area',
+	series: [
+		{
+			data: seriesData[0],
+			color: 'steelblue'
+		}, {
+			data: seriesData[1],
+			color: 'lightblue'
+		}
+	]
+} );
+
+var tap = new Rickshaw.Graph.TapZoom({
+	graph: graph,
+	zoomAmount: 800,
+	maxZoomed: 60
+});
+
+graph.render();
+
+</script>
