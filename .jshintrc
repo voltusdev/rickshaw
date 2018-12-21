@@ -1,7 +1,9 @@
 {
+  "asi": true,
   "funcscope": true,
   "lastsemic": true,
   "loopfunc": true,
+  "laxbreak": true,
   "eqnull": true,
   "expr": true,
   "undef": true,

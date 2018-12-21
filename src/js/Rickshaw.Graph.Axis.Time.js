@@ -1,83 +1,81 @@
-Rickshaw.namespace('Rickshaw.Graph.Axis.Time');
+Rickshaw.namespace('Rickshaw.Graph.Axis.Time')
 
 Rickshaw.Graph.Axis.Time = function(args) {
+  this.graph = args.graph
+  this.elements = []
+  this.ticksTreatment = args.ticksTreatment || 'plain'
+  this.fixedTimeUnit = args.timeUnit
 
-	this.graph = args.graph;
-	this.elements = [];
-	this.ticksTreatment = args.ticksTreatment || 'plain';
-	this.fixedTimeUnit = args.timeUnit;
+  var time = args.timeFixture || new Rickshaw.Fixtures.Time()
 
-	var time = args.timeFixture || new Rickshaw.Fixtures.Time();
+  this.appropriateTimeUnit = function() {
+    var unit
+    var units = time.units
 
-	this.appropriateTimeUnit = function() {
+    var domain = this.graph.x.domain()
+    var rangeSeconds = domain[1] - domain[0]
 
-		var unit;
-		var units = time.units;
+    units.forEach(function(u) {
+      if (Math.floor(rangeSeconds / u.seconds) >= 2) {
+        unit = unit || u
+      }
+    })
 
-		var domain = this.graph.x.domain();
-		var rangeSeconds = domain[1] - domain[0];
+    return unit || time.units[time.units.length - 1]
+  }
 
-		units.forEach( function(u) {
-			if (Math.floor(rangeSeconds / u.seconds) >= 2) {
-				unit = unit || u;
-			}
-		} );
+  this.tickOffsets = function() {
+    var domain = this.graph.x.domain()
 
-		return (unit || time.units[time.units.length - 1]);
-	};
+    var unit = this.fixedTimeUnit || this.appropriateTimeUnit()
+    var count = Math.ceil((domain[1] - domain[0]) / unit.seconds)
 
-	this.tickOffsets = function() {
+    var runningTick = domain[0]
 
-		var domain = this.graph.x.domain();
+    var offsets = []
 
-		var unit = this.fixedTimeUnit || this.appropriateTimeUnit();
-		var count = Math.ceil((domain[1] - domain[0]) / unit.seconds);
+    for (var i = 0; i < count; i++) {
+      var tickValue = time.ceil(runningTick, unit)
+      runningTick = tickValue + unit.seconds / 2
 
-		var runningTick = domain[0];
+      offsets.push({ value: tickValue, unit: unit })
+    }
 
-		var offsets = [];
+    return offsets
+  }
 
-		for (var i = 0; i < count; i++) {
+  this.render = function() {
+    this.elements.forEach(function(e) {
+      e.parentNode.removeChild(e)
+    })
 
-			var tickValue = time.ceil(runningTick, unit);
-			runningTick = tickValue + unit.seconds / 2;
+    this.elements = []
 
-			offsets.push( { value: tickValue, unit: unit } );
-		}
+    var offsets = this.tickOffsets()
 
-		return offsets;
-	};
+    offsets.forEach(
+      function(o) {
+        if (this.graph.x(o.value) > this.graph.x.range()[1]) return
 
-	this.render = function() {
+        var element = document.createElement('div')
+        element.style.left = this.graph.x(o.value) + 'px'
+        element.classList.add('x_tick')
+        element.classList.add(this.ticksTreatment)
 
-		this.elements.forEach( function(e) {
-			e.parentNode.removeChild(e);
-		} );
+        var title = document.createElement('div')
+        title.classList.add('title')
+        title.innerHTML = o.unit.formatter(new Date(o.value * 1000))
+        element.appendChild(title)
 
-		this.elements = [];
+        this.graph.element.appendChild(element)
+        this.elements.push(element)
+      }.bind(this)
+    )
+  }
 
-		var offsets = this.tickOffsets();
-
-		offsets.forEach( function(o) {
-			
-			if (this.graph.x(o.value) > this.graph.x.range()[1]) return;
-	
-			var element = document.createElement('div');
-			element.style.left = this.graph.x(o.value) + 'px';
-			element.classList.add('x_tick');
-			element.classList.add(this.ticksTreatment);
-
-			var title = document.createElement('div');
-			title.classList.add('title');
-			title.innerHTML = o.unit.formatter(new Date(o.value * 1000));
-			element.appendChild(title);
-
-			this.graph.element.appendChild(element);
-			this.elements.push(element);
-
-		}.bind(this) );
-	};
-
-	this.graph.onUpdate( function() { this.render() }.bind(this) );
-};
-
+  this.graph.onUpdate(
+    function() {
+      this.render()
+    }.bind(this)
+  )
+}

@@ -1,103 +1,109 @@
-Rickshaw.namespace('Rickshaw.Graph.Annotate');
+Rickshaw.namespace('Rickshaw.Graph.Annotate')
 
 Rickshaw.Graph.Annotate = function(args) {
+  var graph = (this.graph = args.graph)
+  this.elements = { timeline: args.element }
 
-	var graph = this.graph = args.graph;
-	this.elements = { timeline: args.element };
-	
-	this.data = {};
+  this.data = {}
 
-	this.elements.timeline.classList.add('rickshaw_annotation_timeline');
+  this.elements.timeline.classList.add('rickshaw_annotation_timeline')
 
-	this.add = function(time, content, end_time) {
-		this.data[time] = this.data[time] || {'boxes': []};
-		this.data[time].boxes.push({content: content, end: end_time});
-	}.bind(this);
+  this.add = function(time, content, end_time) {
+    this.data[time] = this.data[time] || { boxes: [] }
+    this.data[time].boxes.push({ content: content, end: end_time })
+  }.bind(this)
 
-	this.update = function() {
+  this.update = function() {
+    Rickshaw.keys(this.data).forEach(function(time) {
+      var annotation = this.data[time]
+      var left = this.graph.x(time)
 
-		Rickshaw.keys(this.data).forEach( function(time) {
+      if (left < 0 || left > this.graph.x.range()[1]) {
+        if (annotation.element) {
+          annotation.line.classList.add('offscreen')
+          annotation.element.style.display = 'none'
+        }
 
-			var annotation = this.data[time];
-			var left = this.graph.x(time);
+        annotation.boxes.forEach(function(box) {
+          if (box.rangeElement) box.rangeElement.classList.add('offscreen')
+        })
 
-			if (left < 0 || left > this.graph.x.range()[1]) {
-				if (annotation.element) {
-					annotation.line.classList.add('offscreen');
-					annotation.element.style.display = 'none';
-				}
+        return
+      }
 
-				annotation.boxes.forEach( function(box) {
-					if ( box.rangeElement ) box.rangeElement.classList.add('offscreen');
-				});
+      if (!annotation.element) {
+        var element = (annotation.element = document.createElement('div'))
+        element.classList.add('annotation')
+        this.elements.timeline.appendChild(element)
+        element.addEventListener(
+          'click',
+          function(e) {
+            element.classList.toggle('active')
+            annotation.line.classList.toggle('active')
+            annotation.boxes.forEach(function(box) {
+              if (box.rangeElement) box.rangeElement.classList.toggle('active')
+            })
+          },
+          false
+        )
+      }
 
-				return;
-			}
+      annotation.element.style.left = left + 'px'
+      annotation.element.style.display = 'block'
 
-			if (!annotation.element) {
-				var element = annotation.element = document.createElement('div');
-				element.classList.add('annotation');
-				this.elements.timeline.appendChild(element);
-				element.addEventListener('click', function(e) {
-					element.classList.toggle('active');
-					annotation.line.classList.toggle('active');
-					annotation.boxes.forEach( function(box) {
-						if ( box.rangeElement ) box.rangeElement.classList.toggle('active');
-					});
-				}, false);
-					
-			}
+      annotation.boxes.forEach(function(box) {
+        var element = box.element
 
-			annotation.element.style.left = left + 'px';
-			annotation.element.style.display = 'block';
+        if (!element) {
+          element = box.element = document.createElement('div')
+          element.classList.add('content')
+          element.innerHTML = box.content
+          annotation.element.appendChild(element)
 
-			annotation.boxes.forEach( function(box) {
+          annotation.line = document.createElement('div')
+          annotation.line.classList.add('annotation_line')
+          this.graph.element.appendChild(annotation.line)
 
+          if (box.end) {
+            box.rangeElement = document.createElement('div')
+            box.rangeElement.classList.add('annotation_range')
+            this.graph.element.appendChild(box.rangeElement)
+          }
+        }
 
-				var element = box.element;
+        if (box.end) {
+          var annotationRangeStart = left
+          var annotationRangeEnd = Math.min(
+            this.graph.x(box.end),
+            this.graph.x.range()[1]
+          )
 
-				if (!element) {
-					element = box.element = document.createElement('div');
-					element.classList.add('content');
-					element.innerHTML = box.content;
-					annotation.element.appendChild(element);
+          // annotation makes more sense at end
+          if (annotationRangeStart > annotationRangeEnd) {
+            annotationRangeEnd = left
+            annotationRangeStart = Math.max(
+              this.graph.x(box.end),
+              this.graph.x.range()[0]
+            )
+          }
 
-					annotation.line = document.createElement('div');
-					annotation.line.classList.add('annotation_line');
-					this.graph.element.appendChild(annotation.line);
+          var annotationRangeWidth = annotationRangeEnd - annotationRangeStart
 
-					if ( box.end ) {
-						box.rangeElement = document.createElement('div');
-						box.rangeElement.classList.add('annotation_range');
-						this.graph.element.appendChild(box.rangeElement);
-					}
+          box.rangeElement.style.left = annotationRangeStart + 'px'
+          box.rangeElement.style.width = annotationRangeWidth + 'px'
 
-				}
+          box.rangeElement.classList.remove('offscreen')
+        }
 
-				if ( box.end ) {
+        annotation.line.classList.remove('offscreen')
+        annotation.line.style.left = left + 'px'
+      }, this)
+    }, this)
+  }
 
-					var annotationRangeStart = left;
-					var annotationRangeEnd   = Math.min( this.graph.x(box.end), this.graph.x.range()[1] );
-
-					// annotation makes more sense at end
-					if ( annotationRangeStart > annotationRangeEnd ) {
-						annotationRangeEnd   = left;
-						annotationRangeStart = Math.max( this.graph.x(box.end), this.graph.x.range()[0] );
-					}
-
-					var annotationRangeWidth = annotationRangeEnd - annotationRangeStart;
-
-					box.rangeElement.style.left  = annotationRangeStart + 'px';
-					box.rangeElement.style.width = annotationRangeWidth + 'px';
-
-					box.rangeElement.classList.remove('offscreen');
-				}
-
-				annotation.line.classList.remove('offscreen');
-				annotation.line.style.left = left + 'px';
-			}, this );
-		}, this );
-	};
-
-	this.graph.onUpdate( function() { this.update() }.bind(this) );
-};
+  this.graph.onUpdate(
+    function() {
+      this.update()
+    }.bind(this)
+  )
+}

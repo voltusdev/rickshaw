@@ -33,13 +33,15 @@
     "jshint": "^2.9.7",
     "nodemon": "^1.11.0",
     "nodeunit": "^0.11.3",
+    "prettier": "1.15.3",
     "sinon": "^2.3.8",
     "uglify-js": "^2.8.29"
   },
   "scripts": {
     "build": "make clean && make",
     "examples": "open examples/index.html",
-    "lint": "jshint src/js/*",
+    "lint": "jshint --verbose src/js/*",
+    "lint:prettier": "prettier --config ./.prettierrc --write src/js/*.js",
     "test": "make && npx nodeunit tests",
     "watch": "nodemon --watch src --exec make rickshaw.js",
     "coverage": "npx istanbul cover nodeunit tests --reporter=lcov",

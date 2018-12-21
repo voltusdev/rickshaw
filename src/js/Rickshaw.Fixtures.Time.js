@@ -1,105 +1,156 @@
-Rickshaw.namespace('Rickshaw.Fixtures.Time');
+Rickshaw.namespace('Rickshaw.Fixtures.Time')
 
 Rickshaw.Fixtures.Time = function() {
+  this.months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ]
 
-	this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  this.units = [
+    {
+      name: 'decade',
+      seconds: 86400 * 365.25 * 10,
+      formatter: function(d) {
+        return parseInt(d.getUTCFullYear() / 10, 10) * 10
+      }
+    },
+    {
+      name: 'year',
+      seconds: 86400 * 365.25,
+      formatter: function(d) {
+        return d.getUTCFullYear()
+      }
+    },
+    {
+      name: 'month',
+      seconds: 86400 * 30.5,
+      formatter: function(d) {
+        return this.months[d.getUTCMonth()]
+      }.bind(this)
+    },
+    {
+      name: 'week',
+      seconds: 86400 * 7,
+      formatter: function(d) {
+        return this.formatDate(d)
+      }.bind(this)
+    },
+    {
+      name: 'day',
+      seconds: 86400,
+      formatter: function(d) {
+        return d.getUTCDate()
+      }
+    },
+    {
+      name: '6 hour',
+      seconds: 3600 * 6,
+      formatter: function(d) {
+        return this.formatTime(d)
+      }.bind(this)
+    },
+    {
+      name: 'hour',
+      seconds: 3600,
+      formatter: function(d) {
+        return this.formatTime(d)
+      }.bind(this)
+    },
+    {
+      name: '15 minute',
+      seconds: 60 * 15,
+      formatter: function(d) {
+        return this.formatTime(d)
+      }.bind(this)
+    },
+    {
+      name: 'minute',
+      seconds: 60,
+      formatter: function(d) {
+        return d.getUTCMinutes() + 'm'
+      }
+    },
+    {
+      name: '15 second',
+      seconds: 15,
+      formatter: function(d) {
+        return d.getUTCSeconds() + 's'
+      }
+    },
+    {
+      name: 'second',
+      seconds: 1,
+      formatter: function(d) {
+        return d.getUTCSeconds() + 's'
+      }
+    },
+    {
+      name: 'decisecond',
+      seconds: 1 / 10,
+      formatter: function(d) {
+        return d.getUTCMilliseconds() + 'ms'
+      }
+    },
+    {
+      name: 'centisecond',
+      seconds: 1 / 100,
+      formatter: function(d) {
+        return d.getUTCMilliseconds() + 'ms'
+      }
+    }
+  ]
 
-	this.units = [
-		{
-			name: 'decade',
-			seconds: 86400 * 365.25 * 10,
-			formatter: function(d) { return (parseInt(d.getUTCFullYear() / 10, 10) * 10) }
-		}, {
-			name: 'year',
-			seconds: 86400 * 365.25,
-			formatter: function(d) { return d.getUTCFullYear() }
-		}, {
-			name: 'month',
-			seconds: 86400 * 30.5,
-			formatter: function(d) { return this.months[d.getUTCMonth()] }.bind(this)
-		}, {
-			name: 'week',
-			seconds: 86400 * 7,
-			formatter: function(d) { return this.formatDate(d) }.bind(this)
-		}, {
-			name: 'day',
-			seconds: 86400,
-			formatter: function(d) { return d.getUTCDate() }
-		}, {
-			name: '6 hour',
-			seconds: 3600 * 6,
-			formatter: function(d) { return this.formatTime(d) }.bind(this)
-		}, {
-			name: 'hour',
-			seconds: 3600,
-			formatter: function(d) { return this.formatTime(d) }.bind(this)
-		}, {
-			name: '15 minute',
-			seconds: 60 * 15,
-			formatter: function(d) { return this.formatTime(d) }.bind(this)
-		}, {
-			name: 'minute',
-			seconds: 60,
-			formatter: function(d) { return d.getUTCMinutes() + 'm' }
-		}, {
-			name: '15 second',
-			seconds: 15,
-			formatter: function(d) { return d.getUTCSeconds() + 's' }
-		}, {
-			name: 'second',
-			seconds: 1,
-			formatter: function(d) { return d.getUTCSeconds() + 's' }
-		}, {
-			name: 'decisecond',
-			seconds: 1/10,
-			formatter: function(d) { return d.getUTCMilliseconds() + 'ms' }
-		}, {
-			name: 'centisecond',
-			seconds: 1/100,
-			formatter: function(d) { return d.getUTCMilliseconds() + 'ms' }
-		}
-	];
+  this.unit = function(unitName) {
+    return this.units
+      .filter(function(unit) {
+        return unitName == unit.name
+      })
+      .shift()
+  }
 
-	this.unit = function(unitName) {
-		return this.units.filter( function(unit) { return unitName == unit.name } ).shift();
-	};
+  this.formatDate = function(d) {
+    return d3.timeFormat('%b %e')(d)
+  }
 
-	this.formatDate = function(d) {
-		return d3.timeFormat('%b %e')(d);
-	};
+  this.formatTime = function(d) {
+    return d.toUTCString().match(/(\d+:\d+):/)[1]
+  }
 
-	this.formatTime = function(d) {
-		return d.toUTCString().match(/(\d+:\d+):/)[1];
-	};
+  this.ceil = function(time, unit) {
+    var date, floor, year
 
-	this.ceil = function(time, unit) {
+    if (unit.name == 'month') {
+      date = new Date(time * 1000)
 
-		var date, floor, year;
+      floor = Date.UTC(date.getUTCFullYear(), date.getUTCMonth()) / 1000
+      if (floor == time) return time
 
-		if (unit.name == 'month') {
+      year = date.getUTCFullYear()
+      var month = date.getUTCMonth() + 1
+      return Date.UTC(year, month) / 1000
+    }
 
-			date = new Date(time * 1000);
+    if (unit.name == 'year') {
+      date = new Date(time * 1000)
 
-			floor = Date.UTC(date.getUTCFullYear(), date.getUTCMonth()) / 1000;
-			if (floor == time) return time;
+      floor = Date.UTC(date.getUTCFullYear(), 0) / 1000
+      if (floor == time) return time
 
-			year = date.getUTCFullYear();
-			var month = date.getUTCMonth() + 1;
-			return Date.UTC(year, month) / 1000;
-		}
+      year = date.getUTCFullYear() + 1
 
-		if (unit.name == 'year') {
+      return Date.UTC(year, 0) / 1000
+    }
 
-			date = new Date(time * 1000);
-
-			floor = Date.UTC(date.getUTCFullYear(), 0) / 1000;
-			if (floor == time) return time;
-
-			year = date.getUTCFullYear() + 1;
-
-			return Date.UTC(year, 0) / 1000;
-		}
-
-		return Math.ceil(time / unit.seconds) * unit.seconds;
-	};
-};
+    return Math.ceil(time / unit.seconds) * unit.seconds
+  }
+}

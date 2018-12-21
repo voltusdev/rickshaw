@@ -1,181 +1,184 @@
-Rickshaw.namespace("Rickshaw.Graph.Renderer");
+Rickshaw.namespace('Rickshaw.Graph.Renderer')
 
-Rickshaw.Graph.Renderer = Rickshaw.Class.create( {
+Rickshaw.Graph.Renderer = Rickshaw.Class.create({
+  initialize: function(args) {
+    this.graph = args.graph
+    this.tension = args.tension || this.tension
+    this.configure(args)
+  },
 
-	initialize: function(args) {
-		this.graph = args.graph;
-		this.tension = args.tension || this.tension;
-		this.configure(args);
-	},
+  seriesPathFactory: function() {
+    //implement in subclass
+  },
 
-	seriesPathFactory: function() {
-		//implement in subclass
-	},
+  seriesStrokeFactory: function() {
+    // implement in subclass
+  },
 
-	seriesStrokeFactory: function() {
-		// implement in subclass
-	},
+  defaults: function() {
+    return {
+      tension: 0.8,
+      strokeWidth: 2,
+      unstack: true,
+      padding: { top: 0.01, right: 0, bottom: 0.01, left: 0 },
+      stroke: false,
+      fill: false,
+      opacity: 1
+    }
+  },
 
-	defaults: function() {
-		return {
-			tension: 0.8,
-			strokeWidth: 2,
-			unstack: true,
-			padding: { top: 0.01, right: 0, bottom: 0.01, left: 0 },
-			stroke: false,
-			fill: false,
-			opacity: 1
-		};
-	},
+  domain: function(data) {
+    // Requires that at least one series contains some data
+    var stackedData = data || this.graph.stackedData || this.graph.stackData()
 
-	domain: function(data) {
-		// Requires that at least one series contains some data
-		var stackedData = data || this.graph.stackedData || this.graph.stackData();
+    // filter out any series that may be empty in the current x-domain
+    stackedData = stackedData.filter(function(a) {
+      return a && a.length !== 0
+    })
 
-		// filter out any series that may be empty in the current x-domain
-		stackedData = stackedData.filter(function (a) { return a && a.length !== 0; });
+    var xMin = +Infinity
+    var xMax = -Infinity
 
-		var xMin = +Infinity;
-		var xMax = -Infinity;
+    var yMin = +Infinity
+    var yMax = -Infinity
 
-		var yMin = +Infinity;
-		var yMax = -Infinity;
+    stackedData.forEach(function(series) {
+      series.forEach(function(d) {
+        if (d.y == null) return
 
-		stackedData.forEach( function(series) {
+        var y = d.y + d.y0
 
-			series.forEach( function(d) {
+        if (y < yMin) yMin = y
+        if (y > yMax) yMax = y
+      })
 
-				if (d.y == null) return;
+      if (!series.length) return
 
-				var y = d.y + d.y0;
+      if (series[0].x < xMin) xMin = series[0].x
+      if (series[series.length - 1].x > xMax) xMax = series[series.length - 1].x
+    })
 
-				if (y < yMin) yMin = y;
-				if (y > yMax) yMax = y;
-			} );
+    xMin -= (xMax - xMin) * this.padding.left
+    xMax += (xMax - xMin) * this.padding.right
 
-			if (!series.length) return;
+    yMin = this.graph.min === 'auto' ? yMin : this.graph.min || 0
+    yMax = this.graph.max === undefined ? yMax : this.graph.max
 
-			if (series[0].x < xMin) xMin = series[0].x;
-			if (series[series.length - 1].x > xMax) xMax = series[series.length - 1].x;
-		} );
+    if (this.graph.min === 'auto' || yMin < 0) {
+      yMin -= (yMax - yMin) * this.padding.bottom
+    }
 
-		xMin -= (xMax - xMin) * this.padding.left;
-		xMax += (xMax - xMin) * this.padding.right;
+    if (this.graph.max === undefined) {
+      yMax += (yMax - yMin) * this.padding.top
+    }
 
-		yMin = this.graph.min === 'auto' ? yMin : this.graph.min || 0;
-		yMax = this.graph.max === undefined ? yMax : this.graph.max;
+    return { x: [xMin, xMax], y: [yMin, yMax] }
+  },
 
-		if (this.graph.min === 'auto' || yMin < 0) {
-			yMin -= (yMax - yMin) * this.padding.bottom;
-		}
+  render: function(args) {
+    args = args || {}
 
-		if (this.graph.max === undefined) {
-			yMax += (yMax - yMin) * this.padding.top;
-		}
+    var graph = this.graph
+    var series = args.series || graph.series
 
-		return { x: [xMin, xMax], y: [yMin, yMax] };
-	},
+    var vis = args.vis || graph.vis
+    vis.selectAll('*').remove()
 
-	render: function(args) {
+    var data = series
+      .filter(function(s) {
+        return !s.disabled
+      })
+      .map(function(s) {
+        return s.stack
+      })
 
-		args = args || {};
+    var pathNodes = vis
+      .selectAll('path.path')
+      .data(data)
+      .enter()
+      .append('svg:path')
+      .classed('path', true)
+      .attr('d', this.seriesPathFactory())
 
-		var graph = this.graph;
-		var series = args.series || graph.series;
+    if (this.stroke) {
+      var strokeNodes = vis
+        .selectAll('path.stroke')
+        .data(data)
+        .enter()
+        .append('svg:path')
+        .classed('stroke', true)
+        .attr('d', this.seriesStrokeFactory())
+    }
 
-		var vis = args.vis || graph.vis;
-		vis.selectAll('*').remove();
+    var i = 0
+    series.forEach(function(series) {
+      if (series.disabled) return
+      series.path = pathNodes._groups[0][i]
+      if (this.stroke) series.stroke = strokeNodes._groups[0][i]
+      this._styleSeries(series)
+      i++
+    }, this)
+  },
 
-		var data = series
-			.filter(function(s) { return !s.disabled })
-			.map(function(s) { return s.stack });
+  _styleSeries: function(series) {
+    var fill = this.fill ? series.color : 'none'
+    var stroke = this.stroke ? series.color : 'none'
+    var strokeWidth = series.strokeWidth ? series.strokeWidth : this.strokeWidth
+    var opacity = series.opacity === undefined ? this.opacity : series.opacity
 
-		var pathNodes = vis.selectAll("path.path")
-			.data(data)
-			.enter().append("svg:path")
-			.classed('path', true)
-			.attr("d", this.seriesPathFactory());
+    series.path.setAttribute('fill', fill)
+    series.path.setAttribute('stroke', stroke)
+    series.path.setAttribute('stroke-width', strokeWidth)
+    series.path.setAttribute('opacity', opacity)
 
-		if (this.stroke) {
-			var strokeNodes = vis.selectAll('path.stroke')
-				.data(data)
-				.enter().append("svg:path")
-				.classed('stroke', true)
-				.attr("d", this.seriesStrokeFactory());
-		}
+    if (series.className) {
+      d3.select(series.path).classed(series.className, true)
+    }
+    if (series.className && this.stroke) {
+      d3.select(series.stroke).classed(series.className, true)
+    }
+  },
 
-		var i = 0;
-		series.forEach( function(series) {
-			if (series.disabled) return;
-			series.path = pathNodes._groups[0][i];
-			if (this.stroke) series.stroke = strokeNodes._groups[0][i];
-			this._styleSeries(series);
-			i++;
-		}, this );
+  configure: function(args) {
+    args = args || {}
 
-	},
+    Rickshaw.keys(this.defaults()).forEach(function(key) {
+      if (!args.hasOwnProperty(key)) {
+        this[key] = this[key] || this.graph[key] || this.defaults()[key]
+        return
+      }
 
-	_styleSeries: function(series) {
+      if (typeof this.defaults()[key] == 'object') {
+        Rickshaw.keys(this.defaults()[key]).forEach(function(k) {
+          this[key][k] =
+            args[key][k] !== undefined
+              ? args[key][k]
+              : this[key][k] !== undefined
+              ? this[key][k]
+              : this.defaults()[key][k]
+        }, this)
+      } else {
+        this[key] =
+          args[key] !== undefined
+            ? args[key]
+            : this[key] !== undefined
+            ? this[key]
+            : this.graph[key] !== undefined
+            ? this.graph[key]
+            : this.defaults()[key]
+      }
+    }, this)
+  },
 
-		var fill = this.fill ? series.color : 'none';
-		var stroke = this.stroke ? series.color : 'none';
-		var strokeWidth = series.strokeWidth ? series.strokeWidth : this.strokeWidth;
-		var opacity = series.opacity === undefined ? this.opacity : series.opacity;
+  setStrokeWidth: function(strokeWidth) {
+    if (strokeWidth !== undefined) {
+      this.strokeWidth = strokeWidth
+    }
+  },
 
-		series.path.setAttribute('fill', fill);
-		series.path.setAttribute('stroke', stroke);
-		series.path.setAttribute('stroke-width', strokeWidth);
-		series.path.setAttribute('opacity', opacity);
-
-		if (series.className) {
-			d3.select(series.path).classed(series.className, true);
-		}
-		if (series.className && this.stroke) {
-			d3.select(series.stroke).classed(series.className, true);
-		}
-	},
-
-	configure: function(args) {
-
-		args = args || {};
-
-		Rickshaw.keys(this.defaults()).forEach( function(key) {
-
-			if (!args.hasOwnProperty(key)) {
-				this[key] = this[key] || this.graph[key] || this.defaults()[key];
-				return;
-			}
-
-			if (typeof this.defaults()[key] == 'object') {
-
-				Rickshaw.keys(this.defaults()[key]).forEach( function(k) {
-
-					this[key][k] =
-						args[key][k] !== undefined ? args[key][k] :
-						this[key][k] !== undefined ? this[key][k] :
-						this.defaults()[key][k];
-				}, this );
-
-			} else {
-				this[key] =
-					args[key] !== undefined ? args[key] :
-					this[key] !== undefined ? this[key] :
-					this.graph[key] !== undefined ? this.graph[key] :
-					this.defaults()[key];
-			}
-
-		}, this );
-	},
-
-	setStrokeWidth: function(strokeWidth) {
-		if (strokeWidth !== undefined) {
-			this.strokeWidth = strokeWidth;
-		}
-	},
-
-	setTension: function(tension) {
-		if (tension !== undefined) {
-			this.tension = tension;
-		}
-	}
-} );
+  setTension: function(tension) {
+    if (tension !== undefined) {
+      this.tension = tension
+    }
+  }
+})

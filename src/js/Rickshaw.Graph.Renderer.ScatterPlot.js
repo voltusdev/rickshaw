@@ -1,53 +1,65 @@
-Rickshaw.namespace('Rickshaw.Graph.Renderer.ScatterPlot');
+Rickshaw.namespace('Rickshaw.Graph.Renderer.ScatterPlot')
 
-Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create( Rickshaw.Graph.Renderer, {
+Rickshaw.Graph.Renderer.ScatterPlot = Rickshaw.Class.create(
+  Rickshaw.Graph.Renderer,
+  {
+    name: 'scatterplot',
 
-	name: 'scatterplot',
+    defaults: function($super) {
+      return Rickshaw.extend($super(), {
+        unstack: true,
+        fill: true,
+        stroke: false,
+        padding: { top: 0.01, right: 0.01, bottom: 0.01, left: 0.01 },
+        dotSize: 4
+      })
+    },
 
-	defaults: function($super) {
+    render: function(args) {
+      args = args || {}
 
-		return Rickshaw.extend( $super(), {
-			unstack: true,
-			fill: true,
-			stroke: false,
-			padding:{ top: 0.01, right: 0.01, bottom: 0.01, left: 0.01 },
-			dotSize: 4
-		} );
-	},
+      var graph = this.graph
 
-	render: function(args) {
+      var series = args.series || graph.series
+      var vis = args.vis || graph.vis
 
-		args = args || {};
+      var dotSize = this.dotSize
 
-		var graph = this.graph;
+      vis.selectAll('*').remove()
 
-		var series = args.series || graph.series;
-		var vis = args.vis || graph.vis;
+      series.forEach(function(series) {
+        if (series.disabled) return
+        var opacity = series.opacity === undefined ? 1 : series.opacity
 
-		var dotSize = this.dotSize;
+        var nodes = vis
+          .selectAll('path')
+          .data(
+            series.stack.filter(function(d) {
+              return d.y !== null
+            })
+          )
+          .enter()
+          .append('svg:circle')
+          .attr('cx', function(d) {
+            return graph.x(d.x)
+          })
+          .attr('cy', function(d) {
+            return graph.y(d.y)
+          })
+          .attr('r', function(d) {
+            return 'r' in d ? d.r : dotSize
+          })
+          .attr('opacity', function(d) {
+            return 'opacity' in d ? d.opacity : opacity
+          })
+        if (series.className) {
+          nodes.classed(series.className, true)
+        }
 
-		vis.selectAll('*').remove();
-
-		series.forEach( function(series) {
-
-			if (series.disabled) return;
-			var opacity = series.opacity === undefined ? 1 : series.opacity;
-
-			var nodes = vis.selectAll("path")
-				.data(series.stack.filter( function(d) { return d.y !== null } ))
-				.enter().append("svg:circle")
-					.attr("cx", function(d) { return graph.x(d.x) })
-					.attr("cy", function(d) { return graph.y(d.y) })
-					.attr("r", function(d) { return ("r" in d) ? d.r : dotSize})
-					.attr("opacity", function(d) { return ("opacity" in d) ? d.opacity : opacity});
-			if (series.className) {
-				nodes.classed(series.className, true);
-			}
-
-			nodes.nodes().forEach(function(n) {
-				n.setAttribute('fill', series.color);
-			} );
-
-		}, this );
-	}
-} );
+        nodes.nodes().forEach(function(n) {
+          n.setAttribute('fill', series.color)
+        })
+      }, this)
+    }
+  }
+)
