@@ -1,6 +1,6 @@
 {
   "name": "pedicab",
-  "version": "1.6.10",
+  "version": "1.6.11",
   "homepage": "https://shutterstock.github.io/rickshaw/",
   "dependencies": {
     "d3": "^4.7.4"
@@ -20,7 +20,7 @@
     "svg"
   ],
   "license": "MIT",
-  "main": "./pedicab",
+  "main": "./rickshaw",
   "engines": {
     "node": ">= 4.0.0"
   },
