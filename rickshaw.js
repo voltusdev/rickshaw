@@ -2048,9 +2048,18 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
     var bands = args.bands || graph.bands
 
     var vis = args.vis || graph.vis
+    var renderer
+    var selection = vis
+    if (graph.renderer.config){
+      renderer = graph.renderer.config.renderer
+    }
+    if (renderer === 'multi'){
+      selection = vis.selectAll('*')
+    }
+
     bands.forEach(function(band) {
       var width = graph.x(band.to) - graph.x(band.from)
-      vis
+      selection
         .insert('rect', 'path')
         .attr('x', graph.x(band.from))
         .attr('y', 0)
@@ -2059,7 +2068,7 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
         .attr('opacity', band.opacity)
         .attr('fill', band.color)
       if (band.name) {
-        vis
+        selection
           .insert('text', 'path')
           .attr('x', graph.x(band.from) + width / 2)
           .attr('y', 0)
@@ -3029,7 +3038,6 @@ Rickshaw.Graph.RangeSlider = Rickshaw.Class.create({
 Rickshaw.namespace('Rickshaw.Graph.RangeSlider.Preview')
 
 Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
-
   initialize: function(args) {
     if (!args.element)
       throw 'Rickshaw.Graph.RangeSlider.Preview needs a reference to an element'
@@ -4597,73 +4605,76 @@ Rickshaw.Graph.TapZoom = Rickshaw.Class.create({
   }
 })
 
-Rickshaw.namespace('Rickshaw.Graph.TapZoom');
+Rickshaw.namespace('Rickshaw.Graph.TapZoom')
 
 Rickshaw.Graph.TapZoom = Rickshaw.Class.create({
+  initialize: function(args) {
+    if (!args || !args.graph) {
+      throw new Error('Rickshaw.Graph.TapZoom needs a reference to a graph')
+    }
+    var defaults = {
+      zoomAmount: 50,
+      maxZoomed: 60,
+      callback: function() {}
+    }
 
-	initialize: function(args) {
-		if (!args || !args.graph) {
-			throw new Error("Rickshaw.Graph.TapZoom needs a reference to a graph");
-		}
-		var defaults = {
-			zoomAmount: 50,
-			maxZoomed: 60,
-			callback: function() {}
-		};
+    this.graph = args.graph
+    this.svg = d3.select(this.graph.element).select('svg')
+    this.svgWidth = parseInt(this.svg.attr('width'), 10)
+    this.zoomAmount = args.zoomAmount || defaults.zoomAmount
+    this.maxZoomed = args.maxZoomed || defaults.maxZoomed
+    this.callback = args.callback || defaults.callback
 
-		this.graph = args.graph;
-		this.svg = d3.select(this.graph.element).select("svg");
-		this.svgWidth = parseInt(this.svg.attr("width"), 10);
-		this.zoomAmount = args.zoomAmount || defaults.zoomAmount;
-		this.maxZoomed = args.maxZoomed || defaults.maxZoomed;
-		this.callback = args.callback || defaults.callback;
+    this.registerTouchEvents()
+  },
 
-		this.registerTouchEvents();
-	},
+  registerTouchEvents: function() {
+    var self = this
+    var taps = []
+    var doubleTapTimeLimit = 300
+    var domain = this.graph.dataDomain()
 
-	registerTouchEvents: function() {
-		var self = this;
-		var taps = [];
-		var doubleTapTimeLimit = 300;
-		var domain = this.graph.dataDomain();
+    var chart = d3
+      .select('.rickshaw_graph')
+      .style('touch-action', 'manipulation')
 
-		var chart = d3.select('.rickshaw_graph')
-			.style("touch-action", "manipulation");
+    this.svg.on('touchstart', onTouchStart)
 
-		this.svg.on("touchstart", onTouchStart);
+    function onTouchStart() {
+      taps.push(d3.event.timeStamp)
 
-		function onTouchStart(){
-			taps.push(d3.event.timeStamp);
+      d3.event.preventDefault()
 
-			d3.event.preventDefault();
+      if (self.graph.window.xMin === undefined) {
+        self.graph.window.xMin = domain[0]
+      }
 
-			if (self.graph.window.xMin === undefined) {
-				self.graph.window.xMin = domain[0];
-			}
+      if (self.graph.window.xMax === undefined) {
+        self.graph.window.xMax = domain[1]
+      }
 
-			if (self.graph.window.xMax === undefined) {
-				self.graph.window.xMax = domain[1];
-			}
+      if (
+        taps.length > 1 &&
+        taps[taps.length - 1] - taps[taps.length - 2] < doubleTapTimeLimit
+      ) {
+        zoomChart()
+      }
+    }
 
-			if (taps.length > 1 && taps[taps.length - 1] - taps[taps.length - 2] < doubleTapTimeLimit) {
-				zoomChart();
-			}
-		}
+    function zoomChart() {
+      self.graph.window.xMin = self.graph.window.xMin + self.zoomAmount
+      self.graph.window.xMax = self.graph.window.xMax - self.zoomAmount
 
-		function zoomChart(){
-			self.graph.window.xMin = self.graph.window.xMin + self.zoomAmount;
-			self.graph.window.xMax = self.graph.window.xMax - self.zoomAmount;
+      if (self.graph.window.xMax - self.graph.window.xMin < self.maxZoomed) {
+        return
+      }
 
-			if (self.graph.window.xMax - self.graph.window.xMin < self.maxZoomed) {
-				return;
-			}
-
-			self.graph.update();
-			taps = [];
-			self.callback();
-		}
-	}
-});
+      self.graph.update()
+      taps = []
+      self.callback()
+    }
+  }
+})
 Rickshaw.namespace('Rickshaw.Series')
 
 Rickshaw.Series = Rickshaw.Class.create(Array, {

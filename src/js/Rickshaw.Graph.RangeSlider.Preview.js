@@ -1,7 +1,6 @@
 Rickshaw.namespace('Rickshaw.Graph.RangeSlider.Preview')
 
 Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
-
   initialize: function(args) {
     if (!args.element)
       throw 'Rickshaw.Graph.RangeSlider.Preview needs a reference to an element'
