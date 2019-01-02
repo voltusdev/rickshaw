@@ -2654,12 +2654,17 @@ Rickshaw.Graph.HoverDetail = Rickshaw.Class.create({
     var topInt = this.graph.y(point.value.y0 + point.value.y)
     var topIntAdjusted = topInt
     var xLabelsize = xLabel.getBoundingClientRect()
+    console.log('graph', graph);
+    console.log('xLabel', xLabel);
+    console.log('xLabelsize', xLabelsize);
     if (topInt < xLabelsize.height + xLabelsize.top) {
       // Let's make sure the label doesn't overlap with the tooltip
-      topIntAdjusted = xLabelsize.height + xLabelsize.top
+      //topIntAdjusted = xLabelsize.height + xLabelsize.top
+      topIntAdjusted = xLabelsize.height + 12
     }
 
     item.style.top = topIntAdjusted + 'px'
+    console.log(item.style.top);
 
     this.element.appendChild(item)
 
