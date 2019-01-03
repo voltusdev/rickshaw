@@ -10,11 +10,19 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
 
     var graph = this.graph
     var bands = args.bands || graph.bands
-
     var vis = args.vis || graph.vis
+
+    var config = graph.renderer.config
+    var configRenderer = !!config && config.renderer
+
+    //Check if the renderer type is 'multi'
+    //if it is, update the d3 selection to account for the different DOM structure in 'multi'
+    var selection =
+      !!configRenderer && configRenderer === 'multi' ? vis.selectAll('*') : vis
+
     bands.forEach(function(band) {
       var width = graph.x(band.to) - graph.x(band.from)
-      vis
+      selection
         .insert('rect', 'path')
         .attr('x', graph.x(band.from))
         .attr('y', 0)
@@ -23,7 +31,7 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
         .attr('opacity', band.opacity)
         .attr('fill', band.color)
       if (band.name) {
-        vis
+        selection
           .insert('text', 'path')
           .attr('x', graph.x(band.from) + width / 2)
           .attr('y', 0)
