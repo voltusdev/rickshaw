@@ -20,7 +20,7 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
     bands.forEach(function(band) {
       var width = graph.x(band.to) - graph.x(band.from)
       vis
-        .insert('rect')
+        .insert('rect', ':first-child')
         .attr('x', graph.x(band.from))
         .attr('y', 0)
         .attr('width', width)
@@ -29,7 +29,7 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
         .attr('fill', band.color)
       if (band.name) {
         vis
-          .insert('text')
+          .insert('text', ':first-child')
           .attr('x', graph.x(band.from) + width / 2)
           .attr('y', 0)
           .attr('width', width)
