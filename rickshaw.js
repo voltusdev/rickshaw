@@ -12,7 +12,7 @@
 /* jshint -W079 */
 
 var Rickshaw = {
-  version: '1.6.11',
+  version: '1.6.12',
 
   namespace: function(namespace, obj) {
     var parts = namespace.split('.')
@@ -2051,15 +2051,15 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
     var config = graph.renderer.config
     var configRenderer = !!config && config.renderer
 
-    //Check if the renderer type is 'multi'
-    //if it is, update the d3 selection to account for the different DOM structure in 'multi'
-    var selection =
-      !!configRenderer && configRenderer === 'multi' ? vis.selectAll('*') : vis
 
-    bands.forEach(function(band) {
+    bands.forEach(function(band, i) {
+      vis.select('#band-' + i).remove()
+      vis.select('#band-text-' + i).remove()
+
       var width = graph.x(band.to) - graph.x(band.from)
-      selection
-        .insert('rect', 'path')
+      vis
+        .insert('rect', ':first-child')
+        .attr('id', 'band-' + i)
         .attr('x', graph.x(band.from))
         .attr('y', 0)
         .attr('width', width)
@@ -2067,8 +2067,9 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
         .attr('opacity', band.opacity)
         .attr('fill', band.color)
       if (band.name) {
-        selection
-          .insert('text', 'path')
+        vis
+          .insert('text', ':first-child')
+          .attr('id', 'band-text-' + i)
           .attr('x', graph.x(band.from) + width / 2)
           .attr('y', 0)
           .attr('width', width)
@@ -2649,13 +2650,13 @@ Rickshaw.Graph.HoverDetail = Rickshaw.Class.create({
       point
     )
 
-    // What should the top be
     var topInt = this.graph.y(point.value.y0 + point.value.y)
     var topIntAdjusted = topInt
     var xLabelsize = xLabel.getBoundingClientRect()
-    if (topInt < xLabelsize.height + xLabelsize.top) {
-      // Let's make sure the label doesn't overlap with the tooltip
-      topIntAdjusted = xLabelsize.height + xLabelsize.top
+    //account for the xLabel's padding
+    var xLabelPadding = 12
+    if (topInt < xLabelsize.height + xLabelPadding) {
+      topIntAdjusted = xLabelsize.height + xLabelPadding
     }
 
     item.style.top = topIntAdjusted + 'px'
@@ -2665,8 +2666,6 @@ Rickshaw.Graph.HoverDetail = Rickshaw.Class.create({
     var dot = document.createElement('div')
 
     dot.className = 'dot'
-    // the dot should be in the right position regardless of altering
-    // the tooltip location
     dot.style.top = topInt + 'px'
     dot.style.borderColor = series.color
 
