@@ -33,7 +33,7 @@ for (var i = 0; i < 75; i++) {
 }
 
 var d = new Date();
-d.setHours(d.getHours() + 1);
+d.setMinutes(d.getMinutes() + 30);
 
 var graph = new Rickshaw.Graph( {
 	element: document.getElementById("chart"),
@@ -44,8 +44,8 @@ var graph = new Rickshaw.Graph( {
 	bands: [{
 		color: "#30c020",
 		from: d/1000,
-		to: Number(d)/1000+(60*60),
-		name: "Weekend",
+		to: Number(d)/1000+(60*10),
+		name: "10min 30min from now",
 		opacity: 0.2
 	}],
 	series: [
