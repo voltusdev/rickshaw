@@ -16,11 +16,14 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
     var configRenderer = !!config && config.renderer
 
 
-    window._foo = vis.selectAll('*')
-    bands.forEach(function(band) {
+    bands.forEach(function(band, i) {
+      vis.select('#band-' + i).remove()
+      vis.select('#band-text-' + i).remove()
+
       var width = graph.x(band.to) - graph.x(band.from)
       vis
         .insert('rect', ':first-child')
+        .attr('id', 'band-' + i)
         .attr('x', graph.x(band.from))
         .attr('y', 0)
         .attr('width', width)
@@ -30,6 +33,7 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
       if (band.name) {
         vis
           .insert('text', ':first-child')
+          .attr('id', 'band-text-' + i)
           .attr('x', graph.x(band.from) + width / 2)
           .attr('y', 0)
           .attr('width', width)
