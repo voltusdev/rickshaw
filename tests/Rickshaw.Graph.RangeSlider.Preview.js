@@ -4,7 +4,7 @@ exports.setUp = function(callback) {
 
 	Rickshaw = require('../rickshaw');
 
-	global.document = require("jsdom").jsdom("<html><head></head><body></body></html>");
+	global.document = require("jsdom").jsdom("<html><head></head><body><div class=\"rickshaw_range_slider_preview_container\"></div></body></html>");
 	global.window = document.defaultView;
 
 	new Rickshaw.Compat.ClassList();
@@ -51,5 +51,3 @@ exports.basic = function(test) {
 	test.equal(graph.renderer.name, preview.previews[0].renderer.name);
 	test.done();
 };
-
-

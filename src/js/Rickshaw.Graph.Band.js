@@ -15,7 +15,6 @@ Rickshaw.Graph.Band = Rickshaw.Class.create({
     var config = graph.renderer.config
     var configRenderer = !!config && config.renderer
 
-
     bands.forEach(function(band, i) {
       vis.select('#band-' + i).remove()
       vis.select('#band-text-' + i).remove()

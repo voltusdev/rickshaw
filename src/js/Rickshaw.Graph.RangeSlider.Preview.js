@@ -125,9 +125,20 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
       var graphArgs = Rickshaw.extend({}, parent.config)
       var height = self.previewHeight / self.graphs.length
       var renderer = parent.renderer.name
+      var container = document.querySelector(
+        '.rickshaw_range_slider_preview_container'
+      )
+
+      if(self.previews.length > 0) {
+        return
+      }
+
+      while (container.hasChildNodes()) {
+        container.removeChild(container.firstChild)
+      }
 
       Rickshaw.extend(graphArgs, {
-        element: this.appendChild(document.createElement('div')),
+        element: container.appendChild(document.createElement('div')),
         height: height,
         width: self.previewWidth,
         series: parent.series,
@@ -137,10 +148,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
       var graph = new Rickshaw.Graph(graphArgs)
       self.previews.push(graph)
 
-      parent.onUpdate(function() {
-        graph.render()
-        self.render()
-      })
+      parent.onUpdate(self.render)
 
       parent.onConfigure(function(args) {
         // don't propagate height
@@ -169,6 +177,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
       .enter()
       .append('div')
       .classed('rickshaw_range_slider_preview_container', true)
+      .merge(graphContainer)
       .style('-webkit-transform', translateCommand)
       .style('-moz-transform', translateCommand)
       .style('-ms-transform', translateCommand)
@@ -211,11 +220,11 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
       .enter()
       .append('svg')
       .classed('rickshaw_range_slider_preview', true)
+      .merge(this.svg)
       .style('height', this.config.height + 'px')
       .style('width', this.config.width + 'px')
       .style('position', 'absolute')
       .style('top', 0)
-      .merge(this.svg)
 
     this._renderDimming()
     this._renderFrame()
@@ -232,11 +241,11 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
     element = element
       .enter()
       .append('path')
+      .classed('dimming', true)
+      .merge(element)
       .attr('fill', 'white')
       .attr('fill-opacity', '0.7')
       .attr('fill-rule', 'evenodd')
-      .classed('dimming', true)
-      .merge(element)
 
     var path = ''
     path +=
@@ -273,14 +282,14 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
     element = element
       .enter()
       .append('path')
+      .classed('frame', true)
+      .merge(element)
       .attr('stroke', 'white')
       .attr('stroke-width', '1px')
       .attr('stroke-linejoin', 'round')
       .attr('fill', this.config.frameColor)
       .attr('fill-opacity', this.config.frameOpacity)
       .attr('fill-rule', 'evenodd')
-      .classed('frame', true)
-      .merge(element)
 
     var path = ''
     path += ' M ' + this.currentFrame[0] + ' 0'
@@ -308,9 +317,9 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
     gripper = gripper
       .enter()
       .append('path')
-      .attr('stroke', this.config.gripperColor)
       .classed('gripper', true)
       .merge(gripper)
+      .attr('stroke', this.config.gripperColor)
 
     var path = ''
 
@@ -345,13 +354,11 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
     leftHandle = leftHandle
       .enter()
       .append('rect')
+      .classed('left_handle', true)
+      .merge(leftHandle)
       .attr('width', this.config.frameHandleThickness)
       .style('cursor', 'ew-resize')
       .style('fill-opacity', '0')
-      .classed('left_handle', true)
-      .merge(leftHandle)
-
-    leftHandle
       .attr('x', this.currentFrame[0])
       .attr('height', this.config.height)
 
@@ -360,13 +367,11 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
     rightHandle = rightHandle
       .enter()
       .append('rect')
+      .classed('right_handle', true)
+      .merge(rightHandle)
       .attr('width', this.config.frameHandleThickness)
       .style('cursor', 'ew-resize')
       .style('fill-opacity', '0')
-      .classed('right_handle', true)
-      .merge(rightHandle)
-
-    rightHandle
       .attr('x', this.currentFrame[1] + this.config.frameHandleThickness)
       .attr('height', this.config.height)
   },
@@ -377,12 +382,10 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
     middleHandle = middleHandle
       .enter()
       .append('rect')
-      .style('cursor', 'move')
-      .style('fill-opacity', '0')
       .classed('middle_handle', true)
       .merge(middleHandle)
-
-    middleHandle
+      .style('cursor', 'move')
+      .style('fill-opacity', '0')
       .attr('width', Math.max(0, this.currentFrame[1] - this.currentFrame[0]))
       .attr('x', this.currentFrame[0] + this.config.frameHandleThickness)
       .attr('height', this.config.height)
