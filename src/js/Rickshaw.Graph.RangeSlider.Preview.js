@@ -148,7 +148,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
       var graph = new Rickshaw.Graph(graphArgs)
       self.previews.push(graph)
 
-      parent.onUpdate(self.render)
+      parent.onUpdate(self.render.bind(self))
 
       parent.onConfigure(function(args) {
         // don't propagate height
