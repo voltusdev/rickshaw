@@ -129,7 +129,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
         '.rickshaw_range_slider_preview_container'
       )
 
-      if(self.previews.length > 0) {
+      if (self.previews.length > 0) {
         return
       }
 
@@ -166,22 +166,13 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
       .selectAll('div.rickshaw_range_slider_preview_container')
       .data(this.graphs)
 
-    var translateCommand =
-      'translate(' +
-      this.config.frameHandleThickness +
-      'px, ' +
-      this.config.frameTopThickness +
-      'px)'
-
     graphContainer
       .enter()
       .append('div')
       .classed('rickshaw_range_slider_preview_container', true)
       .merge(graphContainer)
-      .style('-webkit-transform', translateCommand)
-      .style('-moz-transform', translateCommand)
-      .style('-ms-transform', translateCommand)
-      .style('transform', translateCommand)
+      .style('padding-left', this.config.frameHandleThickness + 'px')
+      .style('padding-top', this.config.frameTopThickness + 'px')
       .each(buildGraph)
 
     graphContainer.exit().remove()
