@@ -1,6 +1,6 @@
 {
   "name": "pedicab",
-  "version": "1.6.14",
+  "version": "1.6.15",
   "homepage": "https://shutterstock.github.io/rickshaw/",
   "dependencies": {
     "d3": "^4.7.4"
