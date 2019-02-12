@@ -2374,17 +2374,19 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
       drag.stopDt = pointAsDate(d3.event)
       var windowAfterDrag = [drag.startDt, drag.stopDt].sort(compareNumbers)
 
-      self.graph.window.xMin = windowAfterDrag[0]
-      self.graph.window.xMax = windowAfterDrag[1]
-
-      var endTime = self.graph.window.xMax
-      var range = self.graph.window.xMax - self.graph.window.xMin
+      var range = windowAfterDrag[1] - windowAfterDrag[0]
 
       reset(this)
 
       if (range < self.minimumTimeSelection || isNaN(range)) {
         return
       }
+
+      self.graph.window.xMin = windowAfterDrag[0]
+      self.graph.window.xMax = windowAfterDrag[1]
+
+      var endTime = self.graph.window.xMax
+
       self.graph.update()
       self.callback({ range: range, endTime: endTime })
     }
@@ -2401,6 +2403,7 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
         return reset(this)
       }
       rectangle
+        .style('opacity', self.opacity)
         .attr('fill', self.fill)
         .attr('x', limits[0])
         .attr('width', selectionWidth)
@@ -2410,7 +2413,7 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
       var el = d3.select(this)
       rectangle = el
         .append('rect')
-        .style('opacity', self.opacity)
+        .style('opacity', 0)
         .attr('y', 0)
         .attr('height', '100%')
 
@@ -4564,7 +4567,6 @@ Rickshaw.Graph.TapZoom = Rickshaw.Class.create({
 
     function onTouchStart() {
       taps.push(d3.event.timeStamp)
-      d3.event.preventDefault()
 
       var withinTimeLimit =
         taps.length > 1 &&
@@ -4586,7 +4588,6 @@ Rickshaw.Graph.TapZoom = Rickshaw.Class.create({
     function zoomChart() {
       self.graph.window.xMin = self.graph.window.xMin + self.zoomAmount
       self.graph.window.xMax = self.graph.window.xMax - self.zoomAmount
-
       if (self.graph.window.xMax - self.graph.window.xMin < self.maxZoomed) {
         return
       }

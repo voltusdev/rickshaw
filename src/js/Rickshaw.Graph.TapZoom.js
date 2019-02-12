@@ -37,7 +37,6 @@ Rickshaw.Graph.TapZoom = Rickshaw.Class.create({
 
     function onTouchStart() {
       taps.push(d3.event.timeStamp)
-      d3.event.preventDefault()
 
       var withinTimeLimit =
         taps.length > 1 &&
@@ -59,7 +58,6 @@ Rickshaw.Graph.TapZoom = Rickshaw.Class.create({
     function zoomChart() {
       self.graph.window.xMin = self.graph.window.xMin + self.zoomAmount
       self.graph.window.xMax = self.graph.window.xMax - self.zoomAmount
-
       if (self.graph.window.xMax - self.graph.window.xMin < self.maxZoomed) {
         return
       }

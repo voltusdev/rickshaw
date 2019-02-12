@@ -75,7 +75,7 @@ exports.drag = function(test) {
 
 	rect = d3.select(element).selectAll('rect')._groups[0][0];
 	test.ok(rect, 'after mousedown we have a rect for drawing drag zoom');
-	test.equal(rect.style.opacity, drag.opacity);
+	test.equal(rect.style.opacity, 0);
 
 	event = global.document.createEvent('MouseEvent');
 	event.initMouseEvent('mousemove', true, true, window, 1, 900, 600, 290, 260, false, false, false, false, 0, null);
@@ -154,7 +154,7 @@ exports.notDrag = function(test) {
 
 	rect = d3.select(element).selectAll('rect')._groups[0][0];
 	test.ok(rect, 'after mousedown we have a rect for drawing drag zoom');
-	test.equal(rect.style.opacity, drag.opacity);
+	test.equal(rect.style.opacity, 0);
 
 	event = global.document.createEvent('MouseEvent');
 	event.initMouseEvent('mouseup', true, true, window, 1, 900, 600, 290, 260, false, false, false, false, 0, null);
