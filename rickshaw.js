@@ -12,7 +12,7 @@
 /* jshint -W079 */
 
 var Rickshaw = {
-  version: '1.6.15',
+  version: '1.6.16',
 
   namespace: function(namespace, obj) {
     var parts = namespace.split('.')
