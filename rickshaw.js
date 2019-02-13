@@ -1908,10 +1908,6 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create({
       .attr('height', this.height * (1 + this.berthRate))
 
     var berth = this.height * this.berthRate
-
-    if (this.orientation == 'left') {
-      this.element.style.top = -1 * berth + 'px'
-    }
   },
 
   render: function() {
@@ -1938,7 +1934,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create({
 
     if (this.orientation == 'left') {
       var berth = this.height * this.berthRate
-      var transform = 'translate(' + (this.width - 1) + ', ' + berth + ')'
+      var transform = 'translate(' + (this.width - 1) + ')'
     }
 
     if (this.element) {
