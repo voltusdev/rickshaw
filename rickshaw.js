@@ -12,7 +12,7 @@
 /* jshint -W079 */
 
 var Rickshaw = {
-  version: '1.6.16',
+  version: '1.6.17',
 
   namespace: function(namespace, obj) {
     var parts = namespace.split('.')
@@ -1907,7 +1907,6 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create({
       .attr('width', this.width)
       .attr('height', this.height * (1 + this.berthRate))
 
-    var berth = this.height * this.berthRate
   },
 
   render: function() {
@@ -1933,7 +1932,6 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create({
     if (this.tickValues) axis.tickValues(this.tickValues)
 
     if (this.orientation == 'left') {
-      var berth = this.height * this.berthRate
       var transform = 'translate(' + (this.width - 1) + ')'
     }
 
